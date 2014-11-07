@@ -27,7 +27,7 @@
         <menu>
             <item
                 android:id="@+id/menu_coder1"
-                android:title="hi"
+                android:title="play"
                 />
             <item
                 android:id="@+id/menu_coder2"

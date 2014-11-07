@@ -35,8 +35,6 @@ public class MainActivity extends Activity {
     /** {@link CardScrollView} to use as the main content view. */
     private CardScrollView mCardScroller;
 
-    private int mPicture = 0;
-
     private String mMovieDirectory;
 
     private boolean mVoiceMenuEnabled = true;
@@ -76,7 +74,7 @@ public class MainActivity extends Activity {
 
             @Override
             public int getPosition(Object item) {
-                if (mView.equals(item)) {mPicture = 0;
+                if (mView.equals(item)) {
                     return 0;
                 }
                 return AdapterView.INVALID_POSITION;
@@ -95,17 +93,6 @@ public class MainActivity extends Activity {
             }
         });
         setContentView(mCardScroller);
-
-        /*String path = mMovieDirectory+"/"+"Wildlife_512kb.mp4";
-        File file = new File(path);
-        if (!file.exists()) {
-            return;
-        }*/
-
-        /*Intent i = new Intent();
-        i.setAction("com.google.glass.action.VIDEOPLAYER");
-        i.putExtra("video_url", path);
-        startActivity(i);*/
     }
 
     @Override
@@ -142,27 +129,37 @@ public class MainActivity extends Activity {
 
     @Override
     public boolean onMenuItemSelected(int featureId, MenuItem item) {
+        String path;
+        File file;
+        Intent i = new Intent();
+        i.setAction("com.google.glass.action.VIDEOPLAYER");
         if (featureId == WindowUtils.FEATURE_VOICE_COMMANDS) {
             switch (item.getItemId()) {
                 case R.id.menu_designer:
-                    mPicture = 0;
-                    String path = mMovieDirectory+"/"+"Wildlife_512kb.mp4";
-                    File file = new File(path);
+                    path = mMovieDirectory+"/"+"Wildlife_512kb.mp4";
+                    file = new File(path);
                     if (!file.exists()) {
                         break;
                     }
 
-                    Intent i = new Intent();
-                    i.setAction("com.google.glass.action.VIDEOPLAYER");
                     i.putExtra("video_url", path);
                     startActivity(i);
                     break;
-                case R.id.menu_coder1:   mPicture = 1; break;
-                case R.id.menu_coder2:   mPicture = 2; break;
-                case R.id.menu_coder3:   mPicture = 3; break;
-                case R.id.menu_coder4:   mPicture = 4; break;
-                case R.id.menu_coder5:   mPicture = 5; break;
-                case R.id.menu_product:  mPicture = 6; break;
+                case R.id.menu_coder1:
+                    path = mMovieDirectory+"/"+"20140906_114529_673.mp4";
+                    file = new File(path);
+                    if (!file.exists()) {
+                        break;
+                    }
+
+                    i.putExtra("video_url", path);
+                    startActivity(i);
+                    break;
+                case R.id.menu_coder2:   break;
+                case R.id.menu_coder3:   break;
+                case R.id.menu_coder4:   break;
+                case R.id.menu_coder5:   break;
+                case R.id.menu_product:  break;
                 default: return true;  // No change.
             }
             //mCardScroller.setAdapter(new CardAdapter(createCards(this)));
@@ -175,29 +172,12 @@ public class MainActivity extends Activity {
      * Builds a Glass styled "Hello World!" view using the {@link CardBuilder} class.
      */
     private View buildView() {
-        //CardBuilder card = new CardBuilder(this, CardBuilder.Layout.TEXT);
-
-        //card.setText(R.string.hello_world);
-
         CardBuilder card = new CardBuilder(this, CardBuilder.Layout.TEXT)
-                .setText("Text card text not fixed")
+                .setText("Text card text")
                 .setFootnote("Text card footnote")
                 .setTimestamp("Text card timestamp");
 
         return card.getView();
-    }
-
-    /** Returns current image resource. */
-    private int getImageResource() {
-        switch (mPicture) {
-            case 1:  return R.drawable.codemonkey1;
-            case 2:  return R.drawable.codemonkey2;
-            case 3:  return R.drawable.codemonkey3;
-            case 4:  return R.drawable.codemonkey4;
-            case 5:  return R.drawable.codemonkey5;
-            case 6:  return R.drawable.product;
-            default: return R.drawable.designer;
-        }
     }
 
 }
