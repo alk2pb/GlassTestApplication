@@ -23,7 +23,7 @@
     <!-- Menu item with a sub menu. -->
     <item
         android:id="@+id/menu_coder"
-        android:title="next">
+        android:title="sub menu">
         <menu>
             <item
                 android:id="@+id/menu_coder1"
@@ -47,6 +47,11 @@
                 />
         </menu>
     </item>
+    <!-- Menu item without a sub menu. -->
+    <item
+        android:id="@+id/menu_next"
+        android:title="next"
+        />
     <!-- Menu item without a sub menu. -->
     <item
         android:id="@+id/menu_product"
