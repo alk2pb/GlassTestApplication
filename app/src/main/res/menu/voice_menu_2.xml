@@ -17,14 +17,14 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/next"
-        android:title="next">
+        android:title="next2">
     </item>
     <item
         android:id="@+id/back"
-        android:title="back"
+        android:title="back2"
         />
     <item
         android:id="@+id/exit"
-        android:title="exit"
+        android:title="exit2"
         />
 </menu>
