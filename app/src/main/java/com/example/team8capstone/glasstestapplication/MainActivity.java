@@ -13,8 +13,10 @@ import android.content.Intent;
 import android.media.AudioManager;
 import android.os.Environment;
 import android.util.Log;
+import android.view.GestureDetector;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.AdapterView;
@@ -58,7 +60,8 @@ public class MainActivity extends Activity {
         // Requests a voice menu on this activity. As for any other window feature,
         // be sure to request this before setContentView() is called
         getWindow().requestFeature(WindowUtils.FEATURE_VOICE_COMMANDS);
-        getWindow().requestFeature(Window.FEATURE_OPTIONS_PANEL);
+
+        //getWindow().requestFeature(Window.FEATURE_OPTIONS_PANEL);
 
         // Ensure screen stays on during demo.
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
@@ -68,10 +71,10 @@ public class MainActivity extends Activity {
         mAdapter = new CardAdapter(createCards(this));
 
         mCardScroller.setAdapter(mAdapter);
-        setContentView(mCardScroller);
+
         setCardScrollerListener();
 
-        //position = mCardScroller.getSelectedItemPosition();
+        setContentView(mCardScroller);
 
     }
 
@@ -102,21 +105,22 @@ public class MainActivity extends Activity {
     public boolean onPreparePanel(int featureId, View view, Menu menu) {
         if (featureId == WindowUtils.FEATURE_VOICE_COMMANDS ||
                 featureId == Window.FEATURE_OPTIONS_PANEL) {
-            switch(mCardScroller.getSelectedItemPosition())
-            {
-                case 0:
-                    menu.add(Menu.NONE,0,Menu.NONE,Integer.toString(mCardScroller.getSelectedItemPosition()));
-                    break;
-                case 1:
-                    menu.add(Menu.NONE,0,Menu.NONE,Integer.toString(mCardScroller.getSelectedItemPosition()));
-                    break;
-                default:
-                    menu.add(Menu.NONE,0,Menu.NONE,Integer.toString(mCardScroller.getSelectedItemPosition()));
-                    break;
-            }
+//            switch(mCardScroller.getSelectedItemPosition())
+//            {
+//                case 0:
+//                    menu.add(Menu.NONE,0,Menu.NONE,Integer.toString(mCardScroller.getSelectedItemPosition()));
+//                    break;
+//                case 1:
+//                    menu.add(Menu.NONE,0,Menu.NONE,Integer.toString(mCardScroller.getSelectedItemPosition()));
+//                    break;
+//                default:
+//                    menu.add(Menu.NONE,0,Menu.NONE,Integer.toString(mCardScroller.getSelectedItemPosition()));
+//                    break;
+//            }
+          menu.add(Menu.NONE,0,Menu.NONE,Integer.toString(mCardScroller.getSelectedItemPosition()));
 
-            // Dynamically decides between enabling/disabling voice menu.
-            return mVoiceMenuEnabled;
+          // Dynamically decides between enabling/disabling voice menu.
+          return mVoiceMenuEnabled;
         }
 
         // Good practice to pass through, for options menu.
@@ -190,28 +194,19 @@ public class MainActivity extends Activity {
         return super.onMenuItemSelected(featureId, item);
     }
 
-    /**switch(mCardScroller.getSelectedItemPosition())
-            {
-                case -1:
-                    menu.add(Menu.NONE,0,Menu.NONE,"Test");
-                    break;
-                default:
-                    menu.add(Menu.NONE,0,Menu.NONE,"Default");
-                    break;
-            }
-     * Different type of activities can be shown, when tapped on a card.
-     */
     private void setCardScrollerListener() {
-        /*mCardScroller.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener()
-        {
+
+        mCardScroller.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
             @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                onPreparePanel(WindowUtils.FEATURE_VOICE_COMMANDS, view, );
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id)
+            {
+                getWindow().invalidatePanelMenu(WindowUtils.FEATURE_VOICE_COMMANDS);
             }
+
             @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-            }
-        });*/
+            public void onNothingSelected(AdapterView<?> parent) {}
+        });
+
         mCardScroller.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override
@@ -258,7 +253,9 @@ public class MainActivity extends Activity {
                 // Play sound.
                 AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
                 am.playSoundEffect(soundEffect);
+                openOptionsMenu();
             }
+
         });
     }
 
