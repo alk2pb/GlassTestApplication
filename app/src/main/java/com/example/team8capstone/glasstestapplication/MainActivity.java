@@ -33,14 +33,10 @@ public class MainActivity extends Activity {
     private static final String TAG = MainActivity.class.getSimpleName();
     // Index of api demo cards.
     // Visible for testing.
-    static final int CARD_BUILDER = 0;
-    static final int CARD_BUILDER_EMBEDDED_LAYOUT = 1;
-    static final int CARD_SCROLL_VIEW = 2;
-    static final int GESTURE_DETECTOR = 3;
-    static final int TEXT_APPEARANCE = 4;
-    static final int OPENGL = 5;
-    static final int VOICE_MENU = 6;
-    static final int SLIDER = 7;
+    static final int SLIDE_ZERO = 0;
+    static final int SLIDE_ONE = 1;
+    static final int SLIDE_TWO = 2;
+    static int childCount;
 
 
     /** {@link CardScrollView} to use as the main content view. */
@@ -51,6 +47,10 @@ public class MainActivity extends Activity {
     private boolean mVoiceMenuEnabled = true;
 
     private CardScrollAdapter mAdapter;
+
+    private String path;
+    private File file;
+    private Intent i = new Intent();
 
     @Override
     protected void onCreate(Bundle bundle) {
@@ -75,6 +75,8 @@ public class MainActivity extends Activity {
         setCardScrollerListener();
 
         setContentView(mCardScroller);
+
+        i.setAction("com.google.glass.action.VIDEOPLAYER");
 
     }
 
@@ -105,19 +107,30 @@ public class MainActivity extends Activity {
     public boolean onPreparePanel(int featureId, View view, Menu menu) {
         if (featureId == WindowUtils.FEATURE_VOICE_COMMANDS ||
                 featureId == Window.FEATURE_OPTIONS_PANEL) {
-//            switch(mCardScroller.getSelectedItemPosition())
-//            {
-//                case 0:
-//                    menu.add(Menu.NONE,0,Menu.NONE,Integer.toString(mCardScroller.getSelectedItemPosition()));
-//                    break;
-//                case 1:
-//                    menu.add(Menu.NONE,0,Menu.NONE,Integer.toString(mCardScroller.getSelectedItemPosition()));
-//                    break;
-//                default:
-//                    menu.add(Menu.NONE,0,Menu.NONE,Integer.toString(mCardScroller.getSelectedItemPosition()));
-//                    break;
-//            }
-          menu.add(Menu.NONE,0,Menu.NONE,Integer.toString(mCardScroller.getSelectedItemPosition()));
+
+            switch(mCardScroller.getSelectedItemPosition())
+            {
+                case 0:
+                    menu.removeItem(R.id._back);
+                    menu.add(Menu.NONE,0,Menu.NONE,"view picture");
+                    break;
+                case 1:
+                    menu.add(Menu.NONE,2,Menu.NONE,"play video");
+                    path = mMovieDirectory+"/"+"Wildlife_512kb.mp4";
+                    file = new File(path);
+                    if (!file.exists()) {
+                        break;
+                    }
+
+                    i.putExtra("video_url", path);
+                    break;
+                case 2:
+                    menu.removeItem(R.id._next);
+                    menu.add(Menu.NONE,1,Menu.NONE,"play audio");
+                    break;
+                default:
+                    break;
+            }
 
           // Dynamically decides between enabling/disabling voice menu.
           return mVoiceMenuEnabled;
@@ -129,56 +142,17 @@ public class MainActivity extends Activity {
 
     @Override
     public boolean onMenuItemSelected(int featureId, MenuItem item) {
-        String path;
-        File file;
-        Intent i = new Intent();
-        i.setAction("com.google.glass.action.VIDEOPLAYER");
-
         if (featureId == WindowUtils.FEATURE_VOICE_COMMANDS ||
                 featureId == Window.FEATURE_OPTIONS_PANEL) {
             switch (item.getItemId()) {
-                /*case R.id.:
-                    path = mMovieDirectory+"/"+"Wildlife_512kb.mp4";
-                    file = new File(path);
-                    if (!file.exists()) {
-                        break;
-                    }
-
-                    i.putExtra("video_url", path);
-                    startActivity(i);
-                    break;
-                case R.id.menu_coder1:
-                    path = mMovieDirectory+"/"+"20140906_114529_673.mp4";
-                    file = new File(path);
-                    if (!file.exists()) {
-                        break;
-                    }
-
-                    i.putExtra("video_url", path);
-                    startActivity(i);
-
-
-                    break;*/
                 case 0:
-                    path = mMovieDirectory+"/"+"20140906_114529_673.mp4";
-                    file = new File(path);
-                    if (!file.exists()) {
-                        break;
-                    }
-
-                    i.putExtra("video_url", path);
+                    break;
+                case 1:
+                    break;
+                case 2:
                     startActivity(i);
-
-
                     break;
-                case R.id.back:
-                    if (mCardScroller.getSelectedItemPosition() > 0)
-                    {
-                        mCardScroller.setSelection(mCardScroller.getSelectedItemPosition() - 1);
-                    }
-
-                    break;
-                case R.id.next:
+                case R.id._next:
 
                     if (mCardScroller.getSelectedItemPosition() < mCardScroller.getChildCount())
                     {
@@ -186,7 +160,24 @@ public class MainActivity extends Activity {
                     }
 
                     break;
-                default: return true;  // No change.
+                case R.id._back:
+                    if (mCardScroller.getSelectedItemPosition() > 0)
+                    {
+                        mCardScroller.setSelection(mCardScroller.getSelectedItemPosition() - 1);
+                    }
+
+                    break;
+                case R.id._exit:
+                    break;
+                case R.id._exit_yes:
+                    finish();
+                    break;
+                case R.id._goto:
+                    break;
+                default:
+                    getWindow().invalidatePanelMenu(WindowUtils.FEATURE_VOICE_COMMANDS);
+                    invalidateOptionsMenu();
+                    return true;
             }
 
             return true;
@@ -201,6 +192,7 @@ public class MainActivity extends Activity {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id)
             {
                 getWindow().invalidatePanelMenu(WindowUtils.FEATURE_VOICE_COMMANDS);
+                invalidateOptionsMenu();
             }
 
             @Override
@@ -214,38 +206,12 @@ public class MainActivity extends Activity {
                 Log.d(TAG, "Clicked view at position " + position + ", row-id " + id);
                 int soundEffect = Sounds.TAP;
                 switch (position) {
-                    case CARD_BUILDER:
-
+                    case SLIDE_ZERO:
                         break;
-
-                    case CARD_BUILDER_EMBEDDED_LAYOUT:
-
+                    case SLIDE_ONE:
                         break;
-
-                    case CARD_SCROLL_VIEW:
-
+                    case SLIDE_TWO:
                         break;
-
-                    case GESTURE_DETECTOR:
-
-                        break;
-
-                    case TEXT_APPEARANCE:
-
-                        break;
-
-                    case OPENGL:
-
-                        break;
-
-                    case VOICE_MENU:
-
-                        break;
-
-                    case SLIDER:
-
-                        break;
-
                     default:
                         soundEffect = Sounds.ERROR;
                         Log.d(TAG, "Don't show anything");
@@ -264,21 +230,12 @@ public class MainActivity extends Activity {
      */
     private List<CardBuilder> createCards(Context context) {
         ArrayList<CardBuilder> cards = new ArrayList<CardBuilder>();
-        cards.add(CARD_BUILDER, new CardBuilder(context, CardBuilder.Layout.TEXT)
+        cards.add(SLIDE_ZERO, new CardBuilder(context, CardBuilder.Layout.COLUMNS)
+                .addImage(R.drawable.beach)
                 .setText("Test"));
-        cards.add(CARD_BUILDER_EMBEDDED_LAYOUT, new CardBuilder(context, CardBuilder.Layout.TEXT)
+        cards.add(SLIDE_ONE, new CardBuilder(context, CardBuilder.Layout.TEXT)
                 .setText("Test"));
-        cards.add(CARD_SCROLL_VIEW, new CardBuilder(context, CardBuilder.Layout.TEXT)
-                .setText("Test"));
-        cards.add(GESTURE_DETECTOR, new CardBuilder(context, CardBuilder.Layout.TEXT)
-                .setText("Test"));
-        cards.add(TEXT_APPEARANCE, new CardBuilder(context, CardBuilder.Layout.TEXT)
-                .setText("Test"));
-        cards.add(OPENGL, new CardBuilder(context, CardBuilder.Layout.TEXT)
-                .setText("Test"));
-        cards.add(VOICE_MENU, new CardBuilder(context, CardBuilder.Layout.TEXT)
-                .setText("Test"));
-        cards.add(SLIDER, new CardBuilder(context, CardBuilder.Layout.TEXT)
+        cards.add(SLIDE_TWO, new CardBuilder(context, CardBuilder.Layout.TEXT)
                 .setText("Test"));
         return cards;
     }

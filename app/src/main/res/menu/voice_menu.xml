@@ -16,15 +16,29 @@
 
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:id="@+id/next"
+        android:id="@+id/_next"
         android:title="next">
     </item>
     <item
-        android:id="@+id/back"
-        android:title="back"
-        />
+        android:id="@+id/_back"
+        android:title="back">
+    </item>
     <item
-        android:id="@+id/exit"
-        android:title="exit"
-        />
+        android:id="@+id/_goto"
+        android:title="goto">
+    </item>
+    <item
+        android:id="@+id/_exit"
+        android:title="exit">
+        <menu>
+            <item
+                android:id="@+id/_exit_yes"
+                android:title="yes"
+            />
+            <item
+                android:id="@+id/_exit_no"
+                android:title="no"
+            />
+        </menu>
+    </item>
 </menu>
