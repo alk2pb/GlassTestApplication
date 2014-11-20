@@ -19,6 +19,8 @@ package com.example.team8capstone.glasstestapplication;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.google.android.glass.widget.CardBuilder;
 import com.google.android.glass.widget.CardScrollAdapter;
@@ -48,7 +50,25 @@ public class CardAdapter extends CardScrollAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        return mCards.get(position).getView(convertView, parent);
+        View view = mCards.get(position).getView(convertView, parent);
+
+        switch (position)
+        {
+            case 3:
+                ViewGroup viewGroup = (ViewGroup) view.findViewById(R.id.right_column);
+                ImageView imageView = (ImageView) viewGroup.getChildAt(0);
+                imageView.setImageResource(R.drawable.beach);
+
+                ViewGroup viewGroup2 = (ViewGroup) view.findViewById(R.id.left_column);
+                TextView textView = (TextView) viewGroup2.getChildAt(0);
+                textView.setText("Test");
+
+                return view;
+            default:
+                return view;
+
+        }
+
     }
 
     @Override

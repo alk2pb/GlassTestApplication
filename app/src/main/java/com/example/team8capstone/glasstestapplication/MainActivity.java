@@ -13,10 +13,8 @@ import android.content.Intent;
 import android.media.AudioManager;
 import android.os.Environment;
 import android.util.Log;
-import android.view.GestureDetector;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.AdapterView;
@@ -27,8 +25,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import java.util.ArrayList;
-
 public class MainActivity extends Activity {
     private static final String TAG = MainActivity.class.getSimpleName();
     // Index of api demo cards.
@@ -36,7 +32,6 @@ public class MainActivity extends Activity {
     static final int SLIDE_ZERO = 0;
     static final int SLIDE_ONE = 1;
     static final int SLIDE_TWO = 2;
-    static int childCount;
 
 
     /** {@link CardScrollView} to use as the main content view. */
@@ -124,7 +119,7 @@ public class MainActivity extends Activity {
 
                     i.putExtra("video_url", path);
                     break;
-                case 2:
+                case 3:
                     menu.removeItem(R.id._next);
                     menu.add(Menu.NONE,1,Menu.NONE,"play audio");
                     break;
@@ -146,6 +141,7 @@ public class MainActivity extends Activity {
                 featureId == Window.FEATURE_OPTIONS_PANEL) {
             switch (item.getItemId()) {
                 case 0:
+                    mCardScroller.getSelectedView();
                     break;
                 case 1:
                     break;
@@ -173,16 +169,24 @@ public class MainActivity extends Activity {
                     finish();
                     break;
                 case R.id._goto:
+                    /*getWindow().invalidatePanelMenu(WindowUtils.FEATURE_VOICE_COMMANDS);
+                    invalidateOptionsMenu();*/
                     break;
                 default:
-                    getWindow().invalidatePanelMenu(WindowUtils.FEATURE_VOICE_COMMANDS);
-                    invalidateOptionsMenu();
+                    /*getWindow().invalidatePanelMenu(WindowUtils.FEATURE_VOICE_COMMANDS);
+                    invalidateOptionsMenu();*/
                     return true;
             }
 
             return true;
         }
         return super.onMenuItemSelected(featureId, item);
+    }
+
+    @Override
+    public void onPanelClosed (int featureId, Menu menu) {
+        getWindow().invalidatePanelMenu(WindowUtils.FEATURE_VOICE_COMMANDS);
+        invalidateOptionsMenu();
     }
 
     private void setCardScrollerListener() {
@@ -237,6 +241,9 @@ public class MainActivity extends Activity {
                 .setText("Test"));
         cards.add(SLIDE_TWO, new CardBuilder(context, CardBuilder.Layout.TEXT)
                 .setText("Test"));
+        cards.add(3, new CardBuilder(context, CardBuilder.Layout.EMBED_INSIDE)
+                .setEmbeddedLayout(R.layout.leftcolumnlayout));
+
         return cards;
     }
 
