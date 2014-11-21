@@ -8,9 +8,7 @@ import com.google.android.glass.widget.CardScrollAdapter;
 import com.google.android.glass.widget.CardScrollView;
 
 import android.app.Activity;
-import com.example.team8capstone.glasstestapplication.MainActivity;
 import android.content.Context;
-import android.content.Intent;
 import android.media.AudioManager;
 import android.os.Bundle;
 import android.view.Menu;
@@ -21,18 +19,6 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 
-import java.io.File;
-
-/**
- * An {@link Activity} showing a tuggable "Hello World!" card.
- * <p/>
- * The main content view is composed of a one-card {@link CardScrollView} that provides tugging
- * feedback to the user when swipe gestures are detected.
- * If your Glassware intends to intercept swipe gestures, you should set the content view directly
- * and use a {@link com.google.android.glass.touchpad.GestureDetector}.
- *
- * @see <a href="https://developers.google.com/glass/develop/gdk/touch">GDK Developer Guide</a>
- */
 public final class ImageActivity extends Activity {
 
     /**
@@ -150,7 +136,7 @@ public final class ImageActivity extends Activity {
                 featureId == Window.FEATURE_OPTIONS_PANEL) {
             switch (item.getItemId()) {
                 case R.id._exit_yes:
-
+                    finish();
                     break;
                 default:
                     return true;

@@ -24,6 +24,7 @@
         <activity android:name=".image.ImageActivity"
             android:exported="true"
             />
+
     </application>
     <uses-permission
         android:name="com.google.android.glass.permission.DEVELOPMENT" />

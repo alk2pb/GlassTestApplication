@@ -85,8 +85,13 @@ public class MainActivity extends Activity {
 
     @Override
     protected void onPause() {
-        if (mediaPlayer.isPlaying()){
-            mediaPlayer.release();
+        try {
+            if (mediaPlayer.isPlaying()){
+                mediaPlayer.release();
+            }
+        }
+        catch(Exception e) {
+
         }
 
         mCardScroller.deactivate();
@@ -126,7 +131,12 @@ public class MainActivity extends Activity {
                     i.putExtra("video_url", path);
                     break;
                 case 2:
-                    menu.add(Menu.NONE,1,Menu.NONE,"play audio");
+                    try {
+                        mediaPlayer.isPlaying();
+                    }
+                    catch(Exception e) {
+                        menu.add(Menu.NONE,1,Menu.NONE,"play audio");
+                    }
                     break;
                 case 3:
                     menu.removeItem(R.id._next);
@@ -134,6 +144,15 @@ public class MainActivity extends Activity {
                     break;
                 default:
                     break;
+            }
+
+            try {
+                if (mediaPlayer.isPlaying()){
+                    menu.add(Menu.NONE,3,Menu.NONE,"stop");
+                }
+            }
+            catch(Exception e) {
+
             }
 
           // Dynamically decides between enabling/disabling voice menu.
@@ -151,8 +170,8 @@ public class MainActivity extends Activity {
             switch (item.getItemId()) {
                 case 0:
                     Intent image = new Intent(MainActivity.this, ImageActivity.class);
-                    image.putExtra("position", mCardScroller.getSelectedItemPosition());
-                    startActivityForResult(image,1);
+                    image.putExtra("position", (float) mCardScroller.getSelectedItemPosition());
+                    startActivity(image);
                     break;
                 case 1:
                     // Plays disallowed sound to indicate that TAP actions are not supported.
@@ -164,6 +183,16 @@ public class MainActivity extends Activity {
                     break;
                 case 2:
                     startActivity(i);
+                    break;
+                case 3:
+                    try {
+                        if (mediaPlayer.isPlaying()){
+                            mediaPlayer.release();
+                        }
+                    }
+                    catch(Exception e) {
+
+                    }
                     break;
                 case R.id._next:
 
