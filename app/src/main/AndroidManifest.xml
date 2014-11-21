@@ -19,6 +19,7 @@
                 android:name="com.google.android.glass.VoiceTrigger"
                 android:resource="@xml/voice_trigger" />
         </activity>
+        <activity android:name=".image.ImageActivity"></activity>
     </application>
     <uses-permission
         android:name="com.google.android.glass.permission.DEVELOPMENT" />

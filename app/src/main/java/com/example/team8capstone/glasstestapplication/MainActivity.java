@@ -1,6 +1,7 @@
 package com.example.team8capstone.glasstestapplication;
 
 
+import com.example.team8capstone.glasstestapplication.image.ImageActivity;
 import com.google.android.glass.media.Sounds;
 import com.google.android.glass.view.WindowUtils;
 import com.google.android.glass.widget.CardBuilder;
@@ -11,8 +12,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.media.AudioManager;
+import android.media.MediaPlayer;
 import android.os.Environment;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -26,12 +27,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends Activity {
-    private static final String TAG = MainActivity.class.getSimpleName();
     // Index of api demo cards.
     // Visible for testing.
     static final int SLIDE_ZERO = 0;
     static final int SLIDE_ONE = 1;
     static final int SLIDE_TWO = 2;
+    static final int SLIDE_THREE = 3;
 
 
     /** {@link CardScrollView} to use as the main content view. */
@@ -46,6 +47,7 @@ public class MainActivity extends Activity {
     private String path;
     private File file;
     private Intent i = new Intent();
+    MediaPlayer mediaPlayer;
 
     @Override
     protected void onCreate(Bundle bundle) {
@@ -83,6 +85,10 @@ public class MainActivity extends Activity {
 
     @Override
     protected void onPause() {
+        if (mediaPlayer.isPlaying()){
+            mediaPlayer.release();
+        }
+
         mCardScroller.deactivate();
         super.onPause();
     }
@@ -141,9 +147,17 @@ public class MainActivity extends Activity {
                 featureId == Window.FEATURE_OPTIONS_PANEL) {
             switch (item.getItemId()) {
                 case 0:
-                    mCardScroller.getSelectedView();
+                    Intent image = new Intent(MainActivity.this, ImageActivity.class);
+                    image.putExtra("position", mCardScroller.getSelectedItemPosition());
+                    startActivity(image);
                     break;
                 case 1:
+                    // Plays disallowed sound to indicate that TAP actions are not supported.
+                    //AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+                    //am.playSoundEffect(Sounds.);
+
+                    mediaPlayer = MediaPlayer.create(MainActivity.this, R.raw.sound_file_1);
+                    mediaPlayer.start();
                     break;
                 case 2:
                     startActivity(i);
@@ -163,18 +177,12 @@ public class MainActivity extends Activity {
                     }
 
                     break;
-                case R.id._exit:
-                    break;
                 case R.id._exit_yes:
                     finish();
                     break;
                 case R.id._goto:
-                    /*getWindow().invalidatePanelMenu(WindowUtils.FEATURE_VOICE_COMMANDS);
-                    invalidateOptionsMenu();*/
                     break;
                 default:
-                    /*getWindow().invalidatePanelMenu(WindowUtils.FEATURE_VOICE_COMMANDS);
-                    invalidateOptionsMenu();*/
                     return true;
             }
 
@@ -207,7 +215,6 @@ public class MainActivity extends Activity {
 
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Log.d(TAG, "Clicked view at position " + position + ", row-id " + id);
                 int soundEffect = Sounds.TAP;
                 switch (position) {
                     case SLIDE_ZERO:
@@ -216,9 +223,10 @@ public class MainActivity extends Activity {
                         break;
                     case SLIDE_TWO:
                         break;
+                    case SLIDE_THREE:
+                        break;
                     default:
                         soundEffect = Sounds.ERROR;
-                        Log.d(TAG, "Don't show anything");
                 }
                 // Play sound.
                 AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
