@@ -125,9 +125,12 @@ public class MainActivity extends Activity {
 
                     i.putExtra("video_url", path);
                     break;
+                case 2:
+                    menu.add(Menu.NONE,1,Menu.NONE,"play audio");
+                    break;
                 case 3:
                     menu.removeItem(R.id._next);
-                    menu.add(Menu.NONE,1,Menu.NONE,"play audio");
+                    menu.add(Menu.NONE,0,Menu.NONE,"view picture");
                     break;
                 default:
                     break;
@@ -149,7 +152,7 @@ public class MainActivity extends Activity {
                 case 0:
                     Intent image = new Intent(MainActivity.this, ImageActivity.class);
                     image.putExtra("position", mCardScroller.getSelectedItemPosition());
-                    startActivity(image);
+                    startActivityForResult(image,1);
                     break;
                 case 1:
                     // Plays disallowed sound to indicate that TAP actions are not supported.
@@ -180,7 +183,17 @@ public class MainActivity extends Activity {
                 case R.id._exit_yes:
                     finish();
                     break;
-                case R.id._goto:
+                case R.id._1:
+                    mCardScroller.setSelection(0);
+                    break;
+                case R.id._2:
+                    mCardScroller.setSelection(1);
+                    break;
+                case R.id._3:
+                    mCardScroller.setSelection(2);
+                    break;
+                case R.id._4:
+                    mCardScroller.setSelection(3);
                     break;
                 default:
                     return true;
@@ -249,7 +262,7 @@ public class MainActivity extends Activity {
                 .setText("Test"));
         cards.add(SLIDE_TWO, new CardBuilder(context, CardBuilder.Layout.TEXT)
                 .setText("Test"));
-        cards.add(3, new CardBuilder(context, CardBuilder.Layout.EMBED_INSIDE)
+        cards.add(SLIDE_THREE, new CardBuilder(context, CardBuilder.Layout.EMBED_INSIDE)
                 .setEmbeddedLayout(R.layout.leftcolumnlayout));
 
         return cards;

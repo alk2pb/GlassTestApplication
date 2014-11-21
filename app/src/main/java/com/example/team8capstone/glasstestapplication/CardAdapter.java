@@ -20,6 +20,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ImageView;
+import android.widget.TableLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.google.android.glass.widget.CardBuilder;
@@ -57,11 +59,20 @@ public class CardAdapter extends CardScrollAdapter {
             case 3:
                 ViewGroup viewGroup = (ViewGroup) view.findViewById(R.id.right_column);
                 ImageView imageView = (ImageView) viewGroup.getChildAt(0);
-                imageView.setImageResource(R.drawable.beach);
+                imageView.setImageResource(R.drawable.supplies);
 
                 ViewGroup viewGroup2 = (ViewGroup) view.findViewById(R.id.left_column);
                 TextView textView = (TextView) viewGroup2.getChildAt(0);
-                textView.setText("Test");
+                textView.setText("Step 1: Gather Supplies\n" +
+                        "• Stepstool\n" +
+                        "• Acrylic yarn\n" +
+                        "• Pulling comb\n" +
+                        "• Rug Hook\n" +
+                        "• Small bucket of clean water\n" +
+                        "• Quic Braid (optional)");
+                textView.setTextSize(15);
+
+                ListView listView = (ListView) viewGroup2.getChildAt(1);
 
                 return view;
             default:

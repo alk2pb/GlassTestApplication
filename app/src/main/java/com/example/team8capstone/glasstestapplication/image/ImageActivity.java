@@ -8,6 +8,7 @@ import com.google.android.glass.widget.CardScrollAdapter;
 import com.google.android.glass.widget.CardScrollView;
 
 import android.app.Activity;
+import com.example.team8capstone.glasstestapplication.MainActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.media.AudioManager;
@@ -96,7 +97,7 @@ public final class ImageActivity extends Activity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 // Plays disallowed sound to indicate that TAP actions are not supported.
                 AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-                am.playSoundEffect(Sounds.DISALLOWED);
+                am.playSoundEffect(Sounds.TAP);
                 openOptionsMenu();
             }
         });
@@ -149,7 +150,7 @@ public final class ImageActivity extends Activity {
                 featureId == Window.FEATURE_OPTIONS_PANEL) {
             switch (item.getItemId()) {
                 case R.id._exit_yes:
-                    finish();
+
                     break;
                 default:
                     return true;
@@ -175,6 +176,9 @@ public final class ImageActivity extends Activity {
         switch((int) position){
             case 0:
                 card.addImage(R.drawable.beach);
+                break;
+            case 3:
+                card.addImage(R.drawable.supplies);
                 break;
             default:
                 break;

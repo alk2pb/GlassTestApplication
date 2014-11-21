@@ -16,6 +16,9 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
+        <ListView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"></ListView>
 
     </RelativeLayout>
 
@@ -44,9 +47,6 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
         android:layout_gravity="bottom|left"
-        android:layout_marginBottom="@dimen/glass_card_footer_margin"
-        android:layout_marginLeft="@dimen/glass_card_two_column_margin"
-        android:layout_marginRight="@dimen/glass_card_margin"
         android:layout_toRightOf="@+id/left_column"
         android:orientation="horizontal"
         >
@@ -57,7 +57,7 @@
              will be ellipsized with a 40px margin between it and the timestamp.
         -->
 
-        <TextView
+        <!--<TextView
             android:id="@+id/footer"
             android:layout_width="0dip"
             android:layout_height="wrap_content"
@@ -75,7 +75,7 @@
             android:ellipsize="end"
             android:singleLine="true"
             android:textAppearance="?android:attr/textAppearanceSmall"
-            />
+            />-->
 
     </LinearLayout>
 

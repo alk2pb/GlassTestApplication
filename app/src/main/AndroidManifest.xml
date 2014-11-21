@@ -10,7 +10,8 @@
         <activity
             android:name=".MainActivity"
             android:icon="@drawable/ic_glass_logo"
-            android:label="@string/title_activity_main" >
+            android:label="@string/title_activity_main"
+            android:exported="true">
             <intent-filter>
                 <action android:name="com.google.android.glass.action.VOICE_TRIGGER" />
             </intent-filter>
@@ -19,7 +20,10 @@
                 android:name="com.google.android.glass.VoiceTrigger"
                 android:resource="@xml/voice_trigger" />
         </activity>
-        <activity android:name=".image.ImageActivity"></activity>
+
+        <activity android:name=".image.ImageActivity"
+            android:exported="true"
+            />
     </application>
     <uses-permission
         android:name="com.google.android.glass.permission.DEVELOPMENT" />
