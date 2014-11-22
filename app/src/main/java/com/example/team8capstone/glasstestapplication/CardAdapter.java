@@ -1,27 +1,11 @@
-/*
- * Copyright (C) 2013 The Android Open Source Project
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package com.example.team8capstone.glasstestapplication;
 
+import android.content.Context;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ImageView;
-import android.widget.TableLayout;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import com.google.android.glass.widget.CardBuilder;
@@ -36,8 +20,11 @@ public class CardAdapter extends CardScrollAdapter {
 
     final List<CardBuilder> mCards;
 
-    public CardAdapter(List<CardBuilder> cards) {
+    Context c;
+
+    public CardAdapter(List<CardBuilder> cards, Context context) {
         mCards = cards;
+        c = context;
     }
 
     @Override
@@ -56,23 +43,38 @@ public class CardAdapter extends CardScrollAdapter {
 
         switch (position)
         {
-            case 3:
-                ViewGroup viewGroup = (ViewGroup) view.findViewById(R.id.right_column);
-                ImageView imageView = (ImageView) viewGroup.getChildAt(0);
-                imageView.setImageResource(R.drawable.supplies);
+            case 0:
+                ViewGroup rightColumn0 = (ViewGroup) view.findViewById(R.id.right_column);
+                ImageView imageView0 = (ImageView) rightColumn0.findViewById(R.id.image);
+                imageView0.setImageResource(R.drawable.supplies);
 
-                ViewGroup viewGroup2 = (ViewGroup) view.findViewById(R.id.left_column);
-                TextView textView = (TextView) viewGroup2.getChildAt(0);
-                textView.setText("Step 1: Gather Supplies\n" +
-                        "• Stepstool\n" +
+                ViewGroup leftColumn0 = (ViewGroup) view.findViewById(R.id.left_column);
+                TextView textViewHeader0 = (TextView) leftColumn0.findViewById(R.id.header);
+                textViewHeader0.setText("Test");
+                textViewHeader0.setTextSize(30);
+
+                return view;
+            case 3:
+                /*LayoutInflater vi = (LayoutInflater) c.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                view = vi.inflate(R.layout.leftcolumnlayout, null);*/
+
+                ViewGroup rightColumn3 = (ViewGroup) view.findViewById(R.id.right_column);
+                ImageView imageView3 = (ImageView) rightColumn3.findViewById(R.id.image);
+                imageView3.setImageResource(R.drawable.supplies);
+
+                ViewGroup leftColumn3 = (ViewGroup) view.findViewById(R.id.left_column);
+                TextView textViewHeader3 = (TextView) leftColumn3.findViewById(R.id.header);
+                textViewHeader3.setText("Step 1: Gather Supplies");
+                textViewHeader3.setTextSize(16);
+
+                TextView textViewContent3 = (TextView) leftColumn3.findViewById(R.id.content);
+                textViewContent3.setText("• Stepstool\n" +
                         "• Acrylic yarn\n" +
                         "• Pulling comb\n" +
                         "• Rug Hook\n" +
                         "• Small bucket of clean water\n" +
                         "• Quic Braid (optional)");
-                textView.setTextSize(15);
-
-                ListView listView = (ListView) viewGroup2.getChildAt(1);
+                textViewContent3.setTextSize(14);
 
                 return view;
             default:

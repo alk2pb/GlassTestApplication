@@ -27,15 +27,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends Activity {
-    // Index of api demo cards.
-    // Visible for testing.
-    static final int SLIDE_ZERO = 0;
-    static final int SLIDE_ONE = 1;
-    static final int SLIDE_TWO = 2;
-    static final int SLIDE_THREE = 3;
 
+    static final int SLIDE_ONE = 0;
+    static final int SLIDE_TWO = 1;
+    static final int SLIDE_THREE = 2;
+    static final int SLIDE_FOUR = 3;
 
-    /** {@link CardScrollView} to use as the main content view. */
     private CardScrollView mCardScroller;
 
     private String mMovieDirectory;
@@ -65,7 +62,7 @@ public class MainActivity extends Activity {
 
         mCardScroller = new CardScrollView(this);
 
-        mAdapter = new CardAdapter(createCards(this));
+        mAdapter = new CardAdapter(createCards(this), this);
 
         mCardScroller.setAdapter(mAdapter);
 
@@ -118,10 +115,12 @@ public class MainActivity extends Activity {
             {
                 case 0:
                     menu.removeItem(R.id._back);
+                    menu.findItem(R.id._goto).getSubMenu().removeItem(R.id._1);
                     menu.add(Menu.NONE,0,Menu.NONE,"view picture");
                     break;
                 case 1:
                     menu.add(Menu.NONE,2,Menu.NONE,"play video");
+                    menu.findItem(R.id._goto).getSubMenu().removeItem(R.id._2);
                     path = mMovieDirectory+"/"+"Wildlife_512kb.mp4";
                     file = new File(path);
                     if (!file.exists()) {
@@ -131,6 +130,7 @@ public class MainActivity extends Activity {
                     i.putExtra("video_url", path);
                     break;
                 case 2:
+                    menu.findItem(R.id._goto).getSubMenu().removeItem(R.id._3);
                     try {
                         mediaPlayer.isPlaying();
                     }
@@ -140,6 +140,7 @@ public class MainActivity extends Activity {
                     break;
                 case 3:
                     menu.removeItem(R.id._next);
+                    menu.findItem(R.id._goto).getSubMenu().removeItem(R.id._4);
                     menu.add(Menu.NONE,0,Menu.NONE,"view picture");
                     break;
                 default:
@@ -148,7 +149,7 @@ public class MainActivity extends Activity {
 
             try {
                 if (mediaPlayer.isPlaying()){
-                    menu.add(Menu.NONE,3,Menu.NONE,"stop");
+                    menu.add(Menu.NONE,3,Menu.NONE,"stop audio");
                 }
             }
             catch(Exception e) {
@@ -174,10 +175,6 @@ public class MainActivity extends Activity {
                     startActivity(image);
                     break;
                 case 1:
-                    // Plays disallowed sound to indicate that TAP actions are not supported.
-                    //AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-                    //am.playSoundEffect(Sounds.);
-
                     mediaPlayer = MediaPlayer.create(MainActivity.this, R.raw.sound_file_1);
                     mediaPlayer.start();
                     break;
@@ -195,19 +192,16 @@ public class MainActivity extends Activity {
                     }
                     break;
                 case R.id._next:
-
                     if (mCardScroller.getSelectedItemPosition() < mCardScroller.getChildCount())
                     {
                         mCardScroller.setSelection(mCardScroller.getSelectedItemPosition() + 1);
                     }
-
                     break;
                 case R.id._back:
                     if (mCardScroller.getSelectedItemPosition() > 0)
                     {
                         mCardScroller.setSelection(mCardScroller.getSelectedItemPosition() - 1);
                     }
-
                     break;
                 case R.id._exit_yes:
                     finish();
@@ -259,13 +253,13 @@ public class MainActivity extends Activity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 int soundEffect = Sounds.TAP;
                 switch (position) {
-                    case SLIDE_ZERO:
-                        break;
                     case SLIDE_ONE:
                         break;
                     case SLIDE_TWO:
                         break;
                     case SLIDE_THREE:
+                        break;
+                    case SLIDE_FOUR:
                         break;
                     default:
                         soundEffect = Sounds.ERROR;
@@ -279,22 +273,20 @@ public class MainActivity extends Activity {
         });
     }
 
-    /**
-     * Create list of API demo cards.
-     */
     private List<CardBuilder> createCards(Context context) {
         ArrayList<CardBuilder> cards = new ArrayList<CardBuilder>();
-        cards.add(SLIDE_ZERO, new CardBuilder(context, CardBuilder.Layout.COLUMNS)
-                .addImage(R.drawable.beach)
-                .setText("Test"));
-        cards.add(SLIDE_ONE, new CardBuilder(context, CardBuilder.Layout.TEXT)
-                .setText("Test"));
+        cards.add(SLIDE_ONE, new CardBuilder(context, CardBuilder.Layout.EMBED_INSIDE)
+                .setEmbeddedLayout(R.layout.leftcolumnlayout));
         cards.add(SLIDE_TWO, new CardBuilder(context, CardBuilder.Layout.TEXT)
                 .setText("Test"));
-        cards.add(SLIDE_THREE, new CardBuilder(context, CardBuilder.Layout.EMBED_INSIDE)
+        cards.add(SLIDE_THREE, new CardBuilder(context, CardBuilder.Layout.TEXT)
+                .setText("Test"));
+        cards.add(SLIDE_FOUR, new CardBuilder(context, CardBuilder.Layout.EMBED_INSIDE)
                 .setEmbeddedLayout(R.layout.leftcolumnlayout));
 
         return cards;
     }
+
+
 
 }
