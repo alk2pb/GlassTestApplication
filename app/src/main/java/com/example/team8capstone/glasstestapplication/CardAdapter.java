@@ -1,15 +1,14 @@
 package com.example.team8capstone.glasstestapplication;
 
+import com.google.android.glass.widget.CardBuilder;
+import com.google.android.glass.widget.CardScrollAdapter;
+
 import android.content.Context;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.TextView;
-
-import com.google.android.glass.widget.CardBuilder;
-import com.google.android.glass.widget.CardScrollAdapter;
 
 import java.util.List;
 
@@ -55,12 +54,9 @@ public class CardAdapter extends CardScrollAdapter {
 
                 return view;
             case 3:
-                /*LayoutInflater vi = (LayoutInflater) c.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                view = vi.inflate(R.layout.leftcolumnlayout, null);*/
-
                 ViewGroup rightColumn3 = (ViewGroup) view.findViewById(R.id.right_column);
                 ImageView imageView3 = (ImageView) rightColumn3.findViewById(R.id.image);
-                imageView3.setImageResource(R.drawable.supplies);
+                imageView3.setImageResource(R.drawable.beach);
 
                 ViewGroup leftColumn3 = (ViewGroup) view.findViewById(R.id.left_column);
                 TextView textViewHeader3 = (TextView) leftColumn3.findViewById(R.id.header);

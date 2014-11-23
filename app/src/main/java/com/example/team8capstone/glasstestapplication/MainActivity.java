@@ -1,7 +1,7 @@
 package com.example.team8capstone.glasstestapplication;
 
-
 import com.example.team8capstone.glasstestapplication.image.ImageActivity;
+
 import com.google.android.glass.media.Sounds;
 import com.google.android.glass.view.WindowUtils;
 import com.google.android.glass.widget.CardBuilder;
@@ -14,13 +14,13 @@ import android.content.Intent;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Environment;
+import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.AdapterView;
-import android.os.Bundle;
 import android.view.Window;
+import android.widget.AdapterView;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -34,44 +34,32 @@ public class MainActivity extends Activity {
     static final int SLIDE_FOUR = 3;
 
     private CardScrollView mCardScroller;
-
     private String mMovieDirectory;
-
     private boolean mVoiceMenuEnabled = true;
-
     private CardScrollAdapter mAdapter;
-
     private String path;
     private File file;
     private Intent i = new Intent();
-    MediaPlayer mediaPlayer;
+    private MediaPlayer mediaPlayer;
 
     @Override
     protected void onCreate(Bundle bundle) {
         super.onCreate(bundle);
         mMovieDirectory = Environment.getExternalStorageDirectory()+"/"+Environment.DIRECTORY_MOVIES;
+        i.setAction("com.google.glass.action.VIDEOPLAYER");
 
         // Requests a voice menu on this activity. As for any other window feature,
         // be sure to request this before setContentView() is called
         getWindow().requestFeature(WindowUtils.FEATURE_VOICE_COMMANDS);
 
-        //getWindow().requestFeature(Window.FEATURE_OPTIONS_PANEL);
-
         // Ensure screen stays on during demo.
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         mCardScroller = new CardScrollView(this);
-
         mAdapter = new CardAdapter(createCards(this), this);
-
         mCardScroller.setAdapter(mAdapter);
-
         setCardScrollerListener();
-
         setContentView(mCardScroller);
-
-        i.setAction("com.google.glass.action.VIDEOPLAYER");
-
     }
 
     @Override
@@ -87,9 +75,7 @@ public class MainActivity extends Activity {
                 mediaPlayer.release();
             }
         }
-        catch(Exception e) {
-
-        }
+        catch(Exception e) {}
 
         mCardScroller.deactivate();
         super.onPause();
@@ -152,9 +138,7 @@ public class MainActivity extends Activity {
                     menu.add(Menu.NONE,3,Menu.NONE,"stop audio");
                 }
             }
-            catch(Exception e) {
-
-            }
+            catch(Exception e) {}
 
           // Dynamically decides between enabling/disabling voice menu.
           return mVoiceMenuEnabled;
@@ -187,9 +171,7 @@ public class MainActivity extends Activity {
                             mediaPlayer.release();
                         }
                     }
-                    catch(Exception e) {
-
-                    }
+                    catch(Exception e) {}
                     break;
                 case R.id._next:
                     if (mCardScroller.getSelectedItemPosition() < mCardScroller.getChildCount())
@@ -276,13 +258,13 @@ public class MainActivity extends Activity {
     private List<CardBuilder> createCards(Context context) {
         ArrayList<CardBuilder> cards = new ArrayList<CardBuilder>();
         cards.add(SLIDE_ONE, new CardBuilder(context, CardBuilder.Layout.EMBED_INSIDE)
-                .setEmbeddedLayout(R.layout.leftcolumnlayout));
+                .setEmbeddedLayout(R.layout.left_column_layout));
         cards.add(SLIDE_TWO, new CardBuilder(context, CardBuilder.Layout.TEXT)
                 .setText("Test"));
         cards.add(SLIDE_THREE, new CardBuilder(context, CardBuilder.Layout.TEXT)
                 .setText("Test"));
         cards.add(SLIDE_FOUR, new CardBuilder(context, CardBuilder.Layout.EMBED_INSIDE)
-                .setEmbeddedLayout(R.layout.leftcolumnlayout));
+                .setEmbeddedLayout(R.layout.left_column_layout));
 
         return cards;
     }

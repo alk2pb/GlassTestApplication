@@ -1,9 +1,9 @@
 package com.example.team8capstone.glasstestapplication.image;
 
 import com.example.team8capstone.glasstestapplication.R;
+
 import com.google.android.glass.media.Sounds;
 import com.google.android.glass.view.WindowUtils;
-import android.view.LayoutInflater;
 import com.google.android.glass.widget.CardScrollAdapter;
 import com.google.android.glass.widget.CardScrollView;
 
@@ -17,17 +17,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.LayoutInflater;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 
+/**
+ * Class that handles displaying full screen images
+ */
 public final class ImageActivity extends Activity {
 
     private CardScrollView mCardScroller;
-
     private boolean mVoiceMenuEnabled = true;
-
     private View mView;
-
     private float position;
 
     @Override
@@ -150,7 +151,7 @@ public final class ImageActivity extends Activity {
 
     private View buildView() {
         LayoutInflater vi = (LayoutInflater) getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View view = vi.inflate(R.layout.image, null);
+        View view = vi.inflate(R.layout.image_layout, null);
 
         ImageView imageView = (ImageView) view.findViewById(R.id.image);
 
@@ -163,7 +164,6 @@ public final class ImageActivity extends Activity {
                 break;
             default:
                 break;
-
         }
 
         return view;
