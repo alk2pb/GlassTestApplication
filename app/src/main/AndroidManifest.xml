@@ -24,6 +24,9 @@
         <activity android:name=".image.ImageActivity"
             android:exported="true"
             />
+        <activity android:name=".video.VideoActivity"
+            android:exported="true"
+            />
 
     </application>
     <uses-permission

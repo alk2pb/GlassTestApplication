@@ -1,4 +1,4 @@
-package com.example.team8capstone.glasstestapplication.image;
+package com.example.team8capstone.glasstestapplication.video;
 
 import com.example.team8capstone.glasstestapplication.R;
 
@@ -10,6 +10,7 @@ import com.google.android.glass.widget.CardScrollView;
 import android.app.Activity;
 import android.content.Context;
 import android.media.AudioManager;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -18,18 +19,24 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.LayoutInflater;
+import android.view.SurfaceView;
+import android.view.SurfaceHolder;
 import android.widget.AdapterView;
-import android.widget.ImageView;
+
 
 /**
- * Class that handles displaying full screen images
+ * Class that handles displaying full screen videos
  */
-public final class ImageActivity extends Activity {
+public final class VideoActivity extends Activity implements SurfaceHolder.Callback, MediaPlayer.OnCompletionListener {
 
     private CardScrollView mCardScroller;
     private boolean mVoiceMenuEnabled = true;
     private View mView;
     private int resource;
+    private SurfaceView surfaceView;
+    private MediaPlayer mediaPlayer = new MediaPlayer();
+    private boolean isPaused = false;
+    private SurfaceHolder surfaceHolder;
 
     @Override
     protected void onCreate(Bundle bundle) {
@@ -45,6 +52,7 @@ public final class ImageActivity extends Activity {
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         mView = buildView();
+
 
         mCardScroller = new CardScrollView(this);
         mCardScroller.setAdapter(new CardScrollAdapter() {
@@ -85,6 +93,16 @@ public final class ImageActivity extends Activity {
         });
 
         setContentView(mCardScroller);
+
+        surfaceView = (SurfaceView) mView.findViewById(R.id.video);
+        surfaceHolder = surfaceView.getHolder();
+        surfaceHolder.addCallback(this);
+
+    }
+
+    public void onCompletion(MediaPlayer mediaplayer) {
+        getWindow().closePanel(WindowUtils.FEATURE_VOICE_COMMANDS);
+        closeOptionsMenu();
     }
 
     @Override
@@ -103,7 +121,7 @@ public final class ImageActivity extends Activity {
     public boolean onCreatePanelMenu(int featureId, Menu menu) {
         if (featureId == WindowUtils.FEATURE_VOICE_COMMANDS ||
                 featureId == Window.FEATURE_OPTIONS_PANEL) {
-            getMenuInflater().inflate(R.menu.image_menu, menu);
+            getMenuInflater().inflate(R.menu.video_menu, menu);
             return true;
         }
         // Good practice to pass through, for options menu.
@@ -114,6 +132,22 @@ public final class ImageActivity extends Activity {
     public boolean onPreparePanel(int featureId, View view, Menu menu) {
         if (featureId == WindowUtils.FEATURE_VOICE_COMMANDS ||
                 featureId == Window.FEATURE_OPTIONS_PANEL) {
+
+            if (!mediaPlayer.isPlaying() && !isPaused) {
+                menu.add(Menu.NONE,1,Menu.NONE,"play video");
+            }
+
+            if (mediaPlayer.isPlaying() || isPaused){
+                if (isPaused){
+                    menu.add(Menu.NONE,4,Menu.NONE,"resume");
+                }
+                else {
+                    menu.add(Menu.NONE,5,Menu.NONE,"pause");
+                }
+                menu.add(Menu.NONE,6,Menu.NONE,"rewind");
+                menu.add(Menu.NONE,7,Menu.NONE,"fast forward");
+                menu.add(Menu.NONE,8,Menu.NONE,"play from beginning");
+            }
 
             // Dynamically decides between enabling/disabling voice menu.
             return mVoiceMenuEnabled;
@@ -133,6 +167,37 @@ public final class ImageActivity extends Activity {
                     break;
                 case R.id._cancel:
                     break;
+                case 1:
+                    mediaPlayer.start();
+                    break;
+                case 4:
+                    mediaPlayer.start();
+                    isPaused = false;
+                    break;
+                case 5:
+                    mediaPlayer.pause();
+                    isPaused = true;
+                    break;
+                case 6:
+                    if (mediaPlayer.getCurrentPosition() < 3000){
+                        mediaPlayer.seekTo(0);
+                    }
+                    else {
+                        mediaPlayer.seekTo(mediaPlayer.getCurrentPosition() - 3000);
+                    }
+                    break;
+                case 7:
+                    if (mediaPlayer.getDuration() - mediaPlayer.getCurrentPosition() < 3000){
+                        mediaPlayer.seekTo(mediaPlayer.getDuration());
+                    }
+                    else {
+                        mediaPlayer.seekTo(mediaPlayer.getCurrentPosition() + 3000);
+                    }
+                    break;
+                case 8:
+                    mediaPlayer.seekTo(0);
+                    isPaused = false;
+                    break;
                 default:
                     return true;
             }
@@ -150,12 +215,32 @@ public final class ImageActivity extends Activity {
 
     private View buildView() {
         LayoutInflater vi = (LayoutInflater) getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View view = vi.inflate(R.layout.image_layout, null);
+        View view = vi.inflate(R.layout.video_layout, null);
 
-        ImageView imageView = (ImageView) view.findViewById(R.id.image);
-        imageView.setImageResource(resource);
+        mediaPlayer = MediaPlayer.create(VideoActivity.this, resource);
+        mediaPlayer.setOnCompletionListener(VideoActivity.this);
 
         return view;
     }
 
+    private void playVideo() {
+        mediaPlayer.start();
+    }
+
+    public void surfaceCreated(SurfaceHolder holder)
+    {
+        mediaPlayer.setDisplay(surfaceHolder);
+        playVideo();
+    }
+
+    public void surfaceDestroyed(SurfaceHolder holder)
+    {
+        if (mediaPlayer.isPlaying()){
+            mediaPlayer.release();
+        }
+    }
+
+    public void surfaceChanged(SurfaceHolder holder, int format, int width, int height)
+    {
+    }
 }

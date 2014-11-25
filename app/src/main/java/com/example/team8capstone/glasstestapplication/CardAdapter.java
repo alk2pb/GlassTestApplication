@@ -45,7 +45,7 @@ public class CardAdapter extends CardScrollAdapter {
             case 0:
                 ViewGroup rightColumn0 = (ViewGroup) view.findViewById(R.id.right_column);
                 ImageView imageView0 = (ImageView) rightColumn0.findViewById(R.id.image);
-                imageView0.setImageResource(R.drawable.supplies);
+                imageView0.setImageResource(R.drawable.beach);
 
                 ViewGroup leftColumn0 = (ViewGroup) view.findViewById(R.id.left_column);
                 TextView textViewHeader0 = (TextView) leftColumn0.findViewById(R.id.header);
@@ -56,7 +56,7 @@ public class CardAdapter extends CardScrollAdapter {
             case 3:
                 ViewGroup rightColumn3 = (ViewGroup) view.findViewById(R.id.right_column);
                 ImageView imageView3 = (ImageView) rightColumn3.findViewById(R.id.image);
-                imageView3.setImageResource(R.drawable.beach);
+                imageView3.setImageResource(R.drawable.supplies);
 
                 ViewGroup leftColumn3 = (ViewGroup) view.findViewById(R.id.left_column);
                 TextView textViewHeader3 = (TextView) leftColumn3.findViewById(R.id.header);

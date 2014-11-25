@@ -43,6 +43,10 @@
                 android:id="@+id/_4"
                 android:title="4"
                 />
+            <item
+                android:id="@+id/_goto_cancel"
+                android:title="cancel">
+            </item>
         </menu>
     </item>
     <item
@@ -58,5 +62,9 @@
                 android:title="no"
             />
         </menu>
+    </item>
+    <item
+        android:id="@+id/_cancel"
+        android:title="cancel">
     </item>
 </menu>

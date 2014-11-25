@@ -1,6 +1,7 @@
 package com.example.team8capstone.glasstestapplication;
 
 import com.example.team8capstone.glasstestapplication.image.ImageActivity;
+import com.example.team8capstone.glasstestapplication.video.VideoActivity;
 
 import com.google.android.glass.media.Sounds;
 import com.google.android.glass.view.WindowUtils;
@@ -13,7 +14,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
-import android.os.Environment;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -22,11 +22,10 @@ import android.view.WindowManager;
 import android.view.Window;
 import android.widget.AdapterView;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends Activity {
+public class MainActivity extends Activity implements MediaPlayer.OnCompletionListener {
 
     static final int SLIDE_ONE = 0;
     static final int SLIDE_TWO = 1;
@@ -34,19 +33,20 @@ public class MainActivity extends Activity {
     static final int SLIDE_FOUR = 3;
 
     private CardScrollView mCardScroller;
-    private String mMovieDirectory;
     private boolean mVoiceMenuEnabled = true;
     private CardScrollAdapter mAdapter;
-    private String path;
-    private File file;
-    private Intent i = new Intent();
-    private MediaPlayer mediaPlayer;
+    private MediaPlayer mediaPlayer = new MediaPlayer();
+    private boolean isPaused = false;
+
+    private Intent image;
+    private Intent video;
 
     @Override
     protected void onCreate(Bundle bundle) {
         super.onCreate(bundle);
-        mMovieDirectory = Environment.getExternalStorageDirectory()+"/"+Environment.DIRECTORY_MOVIES;
-        i.setAction("com.google.glass.action.VIDEOPLAYER");
+
+        image = new Intent(this, ImageActivity.class);
+        video = new Intent(this, VideoActivity.class);
 
         // Requests a voice menu on this activity. As for any other window feature,
         // be sure to request this before setContentView() is called
@@ -60,6 +60,12 @@ public class MainActivity extends Activity {
         mCardScroller.setAdapter(mAdapter);
         setCardScrollerListener();
         setContentView(mCardScroller);
+
+    }
+
+    public void onCompletion(MediaPlayer mediaplayer) {
+        getWindow().closePanel(WindowUtils.FEATURE_VOICE_COMMANDS);
+        closeOptionsMenu();
     }
 
     @Override
@@ -70,15 +76,17 @@ public class MainActivity extends Activity {
 
     @Override
     protected void onPause() {
-        try {
-            if (mediaPlayer.isPlaying()){
-                mediaPlayer.release();
-            }
+        if (mediaPlayer.isPlaying()){
+            mediaPlayer.reset();
         }
-        catch(Exception e) {}
 
         mCardScroller.deactivate();
         super.onPause();
+    }
+
+    @Override
+    protected void onDestroy() {
+        mediaPlayer.release();
     }
 
     @Override
@@ -99,32 +107,22 @@ public class MainActivity extends Activity {
 
             switch(mCardScroller.getSelectedItemPosition())
             {
-                case 0:
+                case SLIDE_ONE:
                     menu.removeItem(R.id._back);
                     menu.findItem(R.id._goto).getSubMenu().removeItem(R.id._1);
                     menu.add(Menu.NONE,0,Menu.NONE,"view picture");
                     break;
-                case 1:
+                case SLIDE_TWO:
                     menu.add(Menu.NONE,2,Menu.NONE,"play video");
                     menu.findItem(R.id._goto).getSubMenu().removeItem(R.id._2);
-                    path = mMovieDirectory+"/"+"Wildlife_512kb.mp4";
-                    file = new File(path);
-                    if (!file.exists()) {
-                        break;
-                    }
-
-                    i.putExtra("video_url", path);
                     break;
-                case 2:
+                case SLIDE_THREE:
                     menu.findItem(R.id._goto).getSubMenu().removeItem(R.id._3);
-                    try {
-                        mediaPlayer.isPlaying();
-                    }
-                    catch(Exception e) {
-                        menu.add(Menu.NONE,1,Menu.NONE,"play audio");
-                    }
+                        if (!mediaPlayer.isPlaying() && !isPaused) {
+                            menu.add(Menu.NONE,1,Menu.NONE,"play audio");
+                        }
                     break;
-                case 3:
+                case SLIDE_FOUR:
                     menu.removeItem(R.id._next);
                     menu.findItem(R.id._goto).getSubMenu().removeItem(R.id._4);
                     menu.add(Menu.NONE,0,Menu.NONE,"view picture");
@@ -133,12 +131,18 @@ public class MainActivity extends Activity {
                     break;
             }
 
-            try {
-                if (mediaPlayer.isPlaying()){
-                    menu.add(Menu.NONE,3,Menu.NONE,"stop audio");
+            if (mediaPlayer.isPlaying() || isPaused){
+                menu.add(Menu.NONE,3,Menu.NONE,"stop audio");
+                if (isPaused){
+                    menu.add(Menu.NONE,4,Menu.NONE,"resume");
                 }
+                else {
+                    menu.add(Menu.NONE,5,Menu.NONE,"pause");
+                }
+                menu.add(Menu.NONE,6,Menu.NONE,"rewind");
+                menu.add(Menu.NONE,7,Menu.NONE,"fast forward");
+                menu.add(Menu.NONE,8,Menu.NONE,"play from beginning");
             }
-            catch(Exception e) {}
 
           // Dynamically decides between enabling/disabling voice menu.
           return mVoiceMenuEnabled;
@@ -154,24 +158,45 @@ public class MainActivity extends Activity {
                 featureId == Window.FEATURE_OPTIONS_PANEL) {
             switch (item.getItemId()) {
                 case 0:
-                    Intent image = new Intent(MainActivity.this, ImageActivity.class);
-                    image.putExtra("position", (float) mCardScroller.getSelectedItemPosition());
                     startActivity(image);
                     break;
                 case 1:
-                    mediaPlayer = MediaPlayer.create(MainActivity.this, R.raw.sound_file_1);
                     mediaPlayer.start();
                     break;
                 case 2:
-                    startActivity(i);
+                    startActivity(video);
                     break;
                 case 3:
-                    try {
-                        if (mediaPlayer.isPlaying()){
-                            mediaPlayer.release();
-                        }
+                    mediaPlayer.reset();
+                    isPaused = false;
+                    break;
+                case 4:
+                    mediaPlayer.start();
+                    isPaused = false;
+                    break;
+                case 5:
+                    mediaPlayer.pause();
+                    isPaused = true;
+                    break;
+                case 6:
+                    if (mediaPlayer.getCurrentPosition() < 3000){
+                        mediaPlayer.seekTo(0);
                     }
-                    catch(Exception e) {}
+                    else {
+                        mediaPlayer.seekTo(mediaPlayer.getCurrentPosition() - 3000);
+                    }
+                    break;
+                case 7:
+                    if (mediaPlayer.getDuration() - mediaPlayer.getCurrentPosition() < 3000){
+                        mediaPlayer.seekTo(mediaPlayer.getDuration());
+                    }
+                    else {
+                        mediaPlayer.seekTo(mediaPlayer.getCurrentPosition() + 3000);
+                    }
+                    break;
+                case 8:
+                    mediaPlayer.seekTo(0);
+                    isPaused = false;
                     break;
                 case R.id._next:
                     if (mCardScroller.getSelectedItemPosition() < mCardScroller.getChildCount())
@@ -200,6 +225,10 @@ public class MainActivity extends Activity {
                 case R.id._4:
                     mCardScroller.setSelection(3);
                     break;
+                case R.id._cancel:
+                    break;
+                case R.id._goto_cancel:
+                    break;
                 default:
                     return true;
             }
@@ -215,6 +244,32 @@ public class MainActivity extends Activity {
         invalidateOptionsMenu();
     }
 
+    private void setMediaResources(int position){
+        switch(position)
+        {
+            case SLIDE_ONE:
+                image.removeExtra("resource");
+                image.putExtra("resource", R.drawable.beach);
+                break;
+            case SLIDE_TWO:
+                video.removeExtra("resource");
+                video.putExtra("resource", R.raw.video_file_1);
+                break;
+            case SLIDE_THREE:
+                if (!mediaPlayer.isPlaying() && !isPaused) {
+                    mediaPlayer = MediaPlayer.create(MainActivity.this, R.raw.sound_file_1);
+                    mediaPlayer.setOnCompletionListener(MainActivity.this);
+                }
+                break;
+            case SLIDE_FOUR:
+                image.removeExtra("resource");
+                image.putExtra("resource", R.drawable.supplies);
+                break;
+            default:
+                break;
+        }
+    }
+
     private void setCardScrollerListener() {
 
         mCardScroller.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
@@ -223,6 +278,7 @@ public class MainActivity extends Activity {
             {
                 getWindow().invalidatePanelMenu(WindowUtils.FEATURE_VOICE_COMMANDS);
                 invalidateOptionsMenu();
+                setMediaResources(mCardScroller.getSelectedItemPosition());
             }
 
             @Override
