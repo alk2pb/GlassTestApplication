@@ -87,6 +87,7 @@ public class MainActivity extends Activity implements MediaPlayer.OnCompletionLi
     @Override
     protected void onDestroy() {
         mediaPlayer.release();
+        super.onDestroy();
     }
 
     @Override
@@ -133,15 +134,17 @@ public class MainActivity extends Activity implements MediaPlayer.OnCompletionLi
 
             if (mediaPlayer.isPlaying() || isPaused){
                 menu.add(Menu.NONE,3,Menu.NONE,"stop audio");
+                menu.addSubMenu(Menu.NONE,9,Menu.NONE,"audio options");
                 if (isPaused){
-                    menu.add(Menu.NONE,4,Menu.NONE,"resume");
+                    menu.findItem(9).getSubMenu().add(Menu.NONE,4,Menu.NONE,"resume");
                 }
                 else {
-                    menu.add(Menu.NONE,5,Menu.NONE,"pause");
+                    menu.findItem(9).getSubMenu().add(Menu.NONE,5,Menu.NONE,"pause");
                 }
-                menu.add(Menu.NONE,6,Menu.NONE,"rewind");
-                menu.add(Menu.NONE,7,Menu.NONE,"fast forward");
-                menu.add(Menu.NONE,8,Menu.NONE,"play from beginning");
+                menu.findItem(9).getSubMenu().add(Menu.NONE,6,Menu.NONE,"rewind");
+                menu.findItem(9).getSubMenu().add(Menu.NONE,7,Menu.NONE,"fast forward");
+                menu.findItem(9).getSubMenu().add(Menu.NONE,8,Menu.NONE,"play from beginning");
+                menu.findItem(9).getSubMenu().add(Menu.NONE,R.id._cancel,Menu.NONE,"cancel");
             }
 
           // Dynamically decides between enabling/disabling voice menu.
@@ -167,7 +170,8 @@ public class MainActivity extends Activity implements MediaPlayer.OnCompletionLi
                     startActivity(video);
                     break;
                 case 3:
-                    mediaPlayer.reset();
+                    mediaPlayer.pause();
+                    mediaPlayer.seekTo(0);
                     isPaused = false;
                     break;
                 case 4:
