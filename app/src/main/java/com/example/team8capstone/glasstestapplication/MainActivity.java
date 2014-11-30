@@ -32,6 +32,11 @@ public class MainActivity extends Activity implements MediaPlayer.OnCompletionLi
     static final int SLIDE_THREE = 2;
     static final int SLIDE_FOUR = 3;
 
+    static final int SLIDE_ONE_MENU = 20 + SLIDE_ONE;
+    static final int SLIDE_TWO_MENU = 20 + SLIDE_TWO;
+    static final int SLIDE_THREE_MENU = 20 + SLIDE_THREE;
+    static final int SLIDE_FOUR_MENU = 20 + SLIDE_FOUR;
+
     private CardScrollView mCardScroller;
     private boolean mVoiceMenuEnabled = true;
     private CardScrollAdapter mAdapter;
@@ -106,26 +111,36 @@ public class MainActivity extends Activity implements MediaPlayer.OnCompletionLi
         if (featureId == WindowUtils.FEATURE_VOICE_COMMANDS ||
                 featureId == Window.FEATURE_OPTIONS_PANEL) {
 
+            menu.add(Menu.NONE,10,Menu.NONE,"next");
+            menu.add(Menu.NONE,11,Menu.NONE,"back");
+            menu.addSubMenu(Menu.NONE,12,Menu.NONE,"goto");
+            menu.findItem(12).getSubMenu().add(Menu.NONE,SLIDE_ONE_MENU,Menu.NONE,"1");
+            menu.findItem(12).getSubMenu().add(Menu.NONE,SLIDE_TWO_MENU,Menu.NONE,"2");
+            menu.findItem(12).getSubMenu().add(Menu.NONE,SLIDE_THREE_MENU,Menu.NONE,"3");
+            menu.findItem(12).getSubMenu().add(Menu.NONE,SLIDE_FOUR_MENU,Menu.NONE,"4");
+            menu.addSubMenu(Menu.NONE,13,Menu.NONE,"exit");
+            menu.findItem(13).getSubMenu().add(Menu.NONE,14,Menu.NONE,"yes");
+
             switch(mCardScroller.getSelectedItemPosition())
             {
                 case SLIDE_ONE:
-                    menu.removeItem(R.id._back);
-                    menu.findItem(R.id._goto).getSubMenu().removeItem(R.id._1);
+                    menu.removeItem(11);
+                    menu.findItem(12).getSubMenu().removeItem(SLIDE_ONE_MENU);
                     menu.add(Menu.NONE,0,Menu.NONE,"view picture");
                     break;
                 case SLIDE_TWO:
                     menu.add(Menu.NONE,2,Menu.NONE,"play video");
-                    menu.findItem(R.id._goto).getSubMenu().removeItem(R.id._2);
+                    menu.findItem(12).getSubMenu().removeItem(SLIDE_TWO_MENU);
                     break;
                 case SLIDE_THREE:
-                    menu.findItem(R.id._goto).getSubMenu().removeItem(R.id._3);
+                    menu.findItem(12).getSubMenu().removeItem(SLIDE_THREE_MENU);
                         if (!mediaPlayer.isPlaying() && !isPaused) {
                             menu.add(Menu.NONE,1,Menu.NONE,"play audio");
                         }
                     break;
                 case SLIDE_FOUR:
-                    menu.removeItem(R.id._next);
-                    menu.findItem(R.id._goto).getSubMenu().removeItem(R.id._4);
+                    menu.removeItem(10);
+                    menu.findItem(12).getSubMenu().removeItem(SLIDE_FOUR_MENU);
                     menu.add(Menu.NONE,0,Menu.NONE,"view picture");
                     break;
                 default:
@@ -144,8 +159,9 @@ public class MainActivity extends Activity implements MediaPlayer.OnCompletionLi
                 menu.findItem(9).getSubMenu().add(Menu.NONE,6,Menu.NONE,"rewind");
                 menu.findItem(9).getSubMenu().add(Menu.NONE,7,Menu.NONE,"fast forward");
                 menu.findItem(9).getSubMenu().add(Menu.NONE,8,Menu.NONE,"play from beginning");
-                menu.findItem(9).getSubMenu().add(Menu.NONE,R.id._cancel,Menu.NONE,"cancel");
             }
+
+            addMoreOptions(menu,1);
 
           // Dynamically decides between enabling/disabling voice menu.
           return mVoiceMenuEnabled;
@@ -153,6 +169,76 @@ public class MainActivity extends Activity implements MediaPlayer.OnCompletionLi
 
         // Good practice to pass through, for options menu.
         return super.onPreparePanel(featureId, view, menu);
+    }
+
+    private void addMoreOptions(Menu menu, int level){
+        if (level == 1){
+            if (menu.size() > 4){
+                menu.addSubMenu(Menu.NONE,level*100,Menu.NONE,"more options");
+            }
+        }
+        else {
+            if (menu.size() > 3){
+                menu.addSubMenu(Menu.NONE,level*100,Menu.NONE,"more options");
+            }
+        }
+
+        collapseMenu(menu,level);
+
+        for (int i = 0; i < menu.size(); i++){
+            if (menu.getItem(i).hasSubMenu()){
+                addMoreOptions(menu.getItem(i).getSubMenu(),level+1);
+            }
+        }
+        menu.add(Menu.NONE,99,Menu.NONE,"cancel");
+    }
+
+    private void reMenu(Menu menu, MenuItem reMenu){
+        menu.addSubMenu(Menu.NONE,reMenu.getItemId(),Menu.NONE,reMenu.getTitle());
+        for (int i = 0; i < reMenu.getSubMenu().size(); i++){
+            if (reMenu.getSubMenu().getItem(i).hasSubMenu()){
+                menu.findItem(reMenu.getItemId()).getSubMenu().addSubMenu(Menu.NONE,reMenu.getSubMenu().getItem(i).getItemId(),Menu.NONE,reMenu.getSubMenu().getItem(i).getTitle());
+                reMenu(menu.findItem(reMenu.getItemId()).getSubMenu().findItem(reMenu.getSubMenu().getItem(i).getItemId()).getSubMenu(),reMenu.getSubMenu().getItem(i));
+            }
+            else{
+                menu.findItem(reMenu.getItemId()).getSubMenu().add(Menu.NONE,reMenu.getSubMenu().getItem(i).getItemId(),Menu.NONE,reMenu.getSubMenu().getItem(i).getTitle());
+            }
+        }
+    }
+
+    private void collapseMenu(Menu menu, int level){
+
+        if (level == 1){
+            if (menu.size() > 4){
+                for (int i = 3; i < menu.size(); i++){
+                    if (!(menu.getItem(i).getItemId()/100 >= 1)){
+                        if(menu.getItem(i).hasSubMenu()){
+                            reMenu(menu.findItem(level*100).getSubMenu(), menu.getItem(i));
+                        }
+                        else {
+                            menu.findItem(level*100).getSubMenu().add(Menu.NONE,menu.getItem(i).getItemId(),Menu.NONE,menu.getItem(i).getTitle());
+                        }
+                        menu.removeItem(menu.getItem(i).getItemId());
+                    }
+                }
+            }
+        }
+        else {
+            if (menu.size() > 3){
+                for (int i = 2; i < menu.size(); i++){
+                    if (!(menu.getItem(i).getItemId()/100 >= 1)){
+                        if(menu.getItem(i).hasSubMenu()){
+                            reMenu(menu.findItem(level*100).getSubMenu(), menu.getItem(i));
+                        }
+                        else {
+                            menu.findItem(level*100).getSubMenu().add(Menu.NONE,menu.getItem(i).getItemId(),Menu.NONE,menu.getItem(i).getTitle());
+                        }
+                        menu.removeItem(menu.getItem(i).getItemId());
+                    }
+                }
+            }
+        }
+
     }
 
     @Override
@@ -202,36 +288,32 @@ public class MainActivity extends Activity implements MediaPlayer.OnCompletionLi
                     mediaPlayer.seekTo(0);
                     isPaused = false;
                     break;
-                case R.id._next:
+                case 10:
                     if (mCardScroller.getSelectedItemPosition() < mCardScroller.getChildCount())
                     {
                         mCardScroller.setSelection(mCardScroller.getSelectedItemPosition() + 1);
                     }
                     break;
-                case R.id._back:
+                case 11:
                     if (mCardScroller.getSelectedItemPosition() > 0)
                     {
                         mCardScroller.setSelection(mCardScroller.getSelectedItemPosition() - 1);
                     }
                     break;
-                case R.id._exit_yes:
+                case 14:
                     finish();
                     break;
-                case R.id._1:
+                case SLIDE_ONE_MENU:
                     mCardScroller.setSelection(0);
                     break;
-                case R.id._2:
+                case SLIDE_TWO_MENU:
                     mCardScroller.setSelection(1);
                     break;
-                case R.id._3:
+                case SLIDE_THREE_MENU:
                     mCardScroller.setSelection(2);
                     break;
-                case R.id._4:
+                case SLIDE_FOUR_MENU:
                     mCardScroller.setSelection(3);
-                    break;
-                case R.id._cancel:
-                    break;
-                case R.id._goto_cancel:
                     break;
                 default:
                     return true;

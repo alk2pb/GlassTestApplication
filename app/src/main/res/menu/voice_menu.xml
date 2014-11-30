@@ -15,7 +15,7 @@
 -->
 
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item
+    <!--<item
         android:id="@+id/_next"
         android:title="next">
     </item>
@@ -43,10 +43,6 @@
                 android:id="@+id/_4"
                 android:title="4"
                 />
-            <item
-                android:id="@+id/_goto_cancel"
-                android:title="cancel">
-            </item>
         </menu>
     </item>
     <item
@@ -66,5 +62,5 @@
     <item
         android:id="@+id/_cancel"
         android:title="cancel">
-    </item>
+    </item>-->
 </menu>
