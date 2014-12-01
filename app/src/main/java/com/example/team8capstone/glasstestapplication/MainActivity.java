@@ -25,18 +25,21 @@ import android.widget.AdapterView;
 import java.util.ArrayList;
 import java.util.List;
 
+// MainActivity creates the main "powerpoint" view and navigation menu
 public class MainActivity extends Activity implements MediaPlayer.OnCompletionListener {
-
+    // Instantiates final int's that specify slide positions
     static final int SLIDE_ONE = 0;
     static final int SLIDE_TWO = 1;
     static final int SLIDE_THREE = 2;
     static final int SLIDE_FOUR = 3;
 
+    // Instantiates final int's that specify slide id's in the menu
     static final int SLIDE_ONE_MENU = 20 + SLIDE_ONE;
     static final int SLIDE_TWO_MENU = 20 + SLIDE_TWO;
     static final int SLIDE_THREE_MENU = 20 + SLIDE_THREE;
     static final int SLIDE_FOUR_MENU = 20 + SLIDE_FOUR;
 
+    // Other variables used (name is self explanatory)
     private CardScrollView mCardScroller;
     private boolean mVoiceMenuEnabled = true;
     private CardScrollAdapter mAdapter;
@@ -50,7 +53,12 @@ public class MainActivity extends Activity implements MediaPlayer.OnCompletionLi
     protected void onCreate(Bundle bundle) {
         super.onCreate(bundle);
 
+        // Instantiates a new intent for the ImageActivity that will be activated when
+        // the user wishes to view a picture
         image = new Intent(this, ImageActivity.class);
+
+        // Instantiates a new intent for the VideoActivity that will be activated when
+        // the user wishes to view a video
         video = new Intent(this, VideoActivity.class);
 
         // Requests a voice menu on this activity. As for any other window feature,
@@ -65,9 +73,9 @@ public class MainActivity extends Activity implements MediaPlayer.OnCompletionLi
         mCardScroller.setAdapter(mAdapter);
         setCardScrollerListener();
         setContentView(mCardScroller);
-
     }
 
+    // When the MediaPlayer finishes, close and refresh the menu
     public void onCompletion(MediaPlayer mediaplayer) {
         getWindow().closePanel(WindowUtils.FEATURE_VOICE_COMMANDS);
         closeOptionsMenu();
@@ -91,6 +99,7 @@ public class MainActivity extends Activity implements MediaPlayer.OnCompletionLi
 
     @Override
     protected void onDestroy() {
+        // Release the MediaPlayer when the activity finishes
         mediaPlayer.release();
         super.onDestroy();
     }
@@ -111,57 +120,18 @@ public class MainActivity extends Activity implements MediaPlayer.OnCompletionLi
         if (featureId == WindowUtils.FEATURE_VOICE_COMMANDS ||
                 featureId == Window.FEATURE_OPTIONS_PANEL) {
 
-            menu.add(Menu.NONE,10,Menu.NONE,"next");
-            menu.add(Menu.NONE,11,Menu.NONE,"back");
-            menu.addSubMenu(Menu.NONE,12,Menu.NONE,"goto");
-            menu.findItem(12).getSubMenu().add(Menu.NONE,SLIDE_ONE_MENU,Menu.NONE,"1");
-            menu.findItem(12).getSubMenu().add(Menu.NONE,SLIDE_TWO_MENU,Menu.NONE,"2");
-            menu.findItem(12).getSubMenu().add(Menu.NONE,SLIDE_THREE_MENU,Menu.NONE,"3");
-            menu.findItem(12).getSubMenu().add(Menu.NONE,SLIDE_FOUR_MENU,Menu.NONE,"4");
-            menu.addSubMenu(Menu.NONE,13,Menu.NONE,"exit");
-            menu.findItem(13).getSubMenu().add(Menu.NONE,14,Menu.NONE,"yes");
+            int position = mCardScroller.getSelectedItemPosition();
 
-            switch(mCardScroller.getSelectedItemPosition())
-            {
-                case SLIDE_ONE:
-                    menu.removeItem(11);
-                    menu.findItem(12).getSubMenu().removeItem(SLIDE_ONE_MENU);
-                    menu.add(Menu.NONE,0,Menu.NONE,"view picture");
-                    break;
-                case SLIDE_TWO:
-                    menu.add(Menu.NONE,2,Menu.NONE,"play video");
-                    menu.findItem(12).getSubMenu().removeItem(SLIDE_TWO_MENU);
-                    break;
-                case SLIDE_THREE:
-                    menu.findItem(12).getSubMenu().removeItem(SLIDE_THREE_MENU);
-                        if (!mediaPlayer.isPlaying() && !isPaused) {
-                            menu.add(Menu.NONE,1,Menu.NONE,"play audio");
-                        }
-                    break;
-                case SLIDE_FOUR:
-                    menu.removeItem(10);
-                    menu.findItem(12).getSubMenu().removeItem(SLIDE_FOUR_MENU);
-                    menu.add(Menu.NONE,0,Menu.NONE,"view picture");
-                    break;
-                default:
-                    break;
-            }
+            addDefaultMenuOptions(menu, position);
+            addCustomMenuOptions(menu, position);
 
+            // If the MediaPlayer is playing, add audio options
             if (mediaPlayer.isPlaying() || isPaused){
-                menu.add(Menu.NONE,3,Menu.NONE,"stop audio");
-                menu.addSubMenu(Menu.NONE,9,Menu.NONE,"audio options");
-                if (isPaused){
-                    menu.findItem(9).getSubMenu().add(Menu.NONE,4,Menu.NONE,"resume");
-                }
-                else {
-                    menu.findItem(9).getSubMenu().add(Menu.NONE,5,Menu.NONE,"pause");
-                }
-                menu.findItem(9).getSubMenu().add(Menu.NONE,6,Menu.NONE,"rewind");
-                menu.findItem(9).getSubMenu().add(Menu.NONE,7,Menu.NONE,"fast forward");
-                menu.findItem(9).getSubMenu().add(Menu.NONE,8,Menu.NONE,"play from beginning");
+                addAudioMenuOptions(menu);
+
             }
 
-            addMoreOptions(menu,1);
+            collapseMenu(menu,1);
 
           // Dynamically decides between enabling/disabling voice menu.
           return mVoiceMenuEnabled;
@@ -171,7 +141,90 @@ public class MainActivity extends Activity implements MediaPlayer.OnCompletionLi
         return super.onPreparePanel(featureId, view, menu);
     }
 
-    private void addMoreOptions(Menu menu, int level){
+    // Add default menu options
+    private void addDefaultMenuOptions(Menu menu, int position){
+        menu.add(Menu.NONE,10,Menu.NONE,"next");
+        menu.add(Menu.NONE,11,Menu.NONE,"back");
+        menu.addSubMenu(Menu.NONE,12,Menu.NONE,"goto");
+        setGotoMenuOptions(menu, position);
+        menu.addSubMenu(Menu.NONE,13,Menu.NONE,"exit");
+        menu.findItem(13).getSubMenu().add(Menu.NONE,14,Menu.NONE,"yes");
+    }
+
+    private void setGotoMenuOptions(Menu menu, int position) {
+        // Add menu options based on slide position
+        switch(position)
+        {
+            case SLIDE_ONE:
+                menu.findItem(12).getSubMenu().add(Menu.NONE,SLIDE_TWO_MENU,Menu.NONE,"2");
+                menu.findItem(12).getSubMenu().add(Menu.NONE,SLIDE_THREE_MENU,Menu.NONE,"3");
+                menu.findItem(12).getSubMenu().add(Menu.NONE,SLIDE_FOUR_MENU,Menu.NONE,"4");
+                break;
+            case SLIDE_TWO:
+                menu.findItem(12).getSubMenu().add(Menu.NONE,SLIDE_ONE_MENU,Menu.NONE,"1");
+                menu.findItem(12).getSubMenu().add(Menu.NONE,SLIDE_THREE_MENU,Menu.NONE,"3");
+                menu.findItem(12).getSubMenu().add(Menu.NONE,SLIDE_FOUR_MENU,Menu.NONE,"4");
+                break;
+            case SLIDE_THREE:
+                menu.findItem(12).getSubMenu().add(Menu.NONE,SLIDE_ONE_MENU,Menu.NONE,"1");
+                menu.findItem(12).getSubMenu().add(Menu.NONE,SLIDE_TWO_MENU,Menu.NONE,"2");
+                menu.findItem(12).getSubMenu().add(Menu.NONE,SLIDE_FOUR_MENU,Menu.NONE,"4");
+                break;
+            case SLIDE_FOUR:
+                menu.findItem(12).getSubMenu().add(Menu.NONE,SLIDE_ONE_MENU,Menu.NONE,"1");
+                menu.findItem(12).getSubMenu().add(Menu.NONE,SLIDE_TWO_MENU,Menu.NONE,"2");
+                menu.findItem(12).getSubMenu().add(Menu.NONE,SLIDE_THREE_MENU,Menu.NONE,"3");
+                break;
+            default:
+                break;
+        }
+    }
+
+    private void addCustomMenuOptions(Menu menu, int position){
+        // Add menu options based on slide position
+        switch(position)
+        {
+            case SLIDE_ONE:
+                menu.removeItem(11);
+                menu.findItem(12).getSubMenu().removeItem(SLIDE_ONE_MENU);
+                menu.add(Menu.NONE,0,Menu.NONE,"view picture");
+                break;
+            case SLIDE_TWO:
+                menu.add(Menu.NONE,2,Menu.NONE,"play video");
+                menu.findItem(12).getSubMenu().removeItem(SLIDE_TWO_MENU);
+                break;
+            case SLIDE_THREE:
+                menu.findItem(12).getSubMenu().removeItem(SLIDE_THREE_MENU);
+                if (!mediaPlayer.isPlaying() && !isPaused) {
+                    menu.add(Menu.NONE,1,Menu.NONE,"play audio");
+                }
+                break;
+            case SLIDE_FOUR:
+                menu.removeItem(10);
+                menu.findItem(12).getSubMenu().removeItem(SLIDE_FOUR_MENU);
+                menu.add(Menu.NONE,0,Menu.NONE,"view picture");
+                break;
+            default:
+                break;
+        }
+    }
+
+    private void addAudioMenuOptions(Menu menu){
+        menu.add(Menu.NONE,3,Menu.NONE,"stop audio");
+        menu.addSubMenu(Menu.NONE,9,Menu.NONE,"audio options");
+        if (isPaused){
+            menu.findItem(9).getSubMenu().add(Menu.NONE,4,Menu.NONE,"resume");
+        }
+        else {
+            menu.findItem(9).getSubMenu().add(Menu.NONE,5,Menu.NONE,"pause");
+        }
+        menu.findItem(9).getSubMenu().add(Menu.NONE,6,Menu.NONE,"rewind");
+        menu.findItem(9).getSubMenu().add(Menu.NONE,7,Menu.NONE,"fast forward");
+        menu.findItem(9).getSubMenu().add(Menu.NONE,8,Menu.NONE,"play from beginning");
+    }
+
+    // Collapse a menu to prevent menu options from going off the viewable screen
+    private void collapseMenu(Menu menu, int level){
         if (level == 1){
             if (menu.size() > 4){
                 menu.addSubMenu(Menu.NONE,level*100,Menu.NONE,"more options");
@@ -182,31 +235,6 @@ public class MainActivity extends Activity implements MediaPlayer.OnCompletionLi
                 menu.addSubMenu(Menu.NONE,level*100,Menu.NONE,"more options");
             }
         }
-
-        collapseMenu(menu,level);
-
-        for (int i = 0; i < menu.size(); i++){
-            if (menu.getItem(i).hasSubMenu()){
-                addMoreOptions(menu.getItem(i).getSubMenu(),level+1);
-            }
-        }
-        menu.add(Menu.NONE,99,Menu.NONE,"cancel");
-    }
-
-    private void reMenu(Menu menu, MenuItem reMenu){
-        menu.addSubMenu(Menu.NONE,reMenu.getItemId(),Menu.NONE,reMenu.getTitle());
-        for (int i = 0; i < reMenu.getSubMenu().size(); i++){
-            if (reMenu.getSubMenu().getItem(i).hasSubMenu()){
-                menu.findItem(reMenu.getItemId()).getSubMenu().addSubMenu(Menu.NONE,reMenu.getSubMenu().getItem(i).getItemId(),Menu.NONE,reMenu.getSubMenu().getItem(i).getTitle());
-                reMenu(menu.findItem(reMenu.getItemId()).getSubMenu().findItem(reMenu.getSubMenu().getItem(i).getItemId()).getSubMenu(),reMenu.getSubMenu().getItem(i));
-            }
-            else{
-                menu.findItem(reMenu.getItemId()).getSubMenu().add(Menu.NONE,reMenu.getSubMenu().getItem(i).getItemId(),Menu.NONE,reMenu.getSubMenu().getItem(i).getTitle());
-            }
-        }
-    }
-
-    private void collapseMenu(Menu menu, int level){
 
         if (level == 1){
             if (menu.size() > 4){
@@ -239,8 +267,29 @@ public class MainActivity extends Activity implements MediaPlayer.OnCompletionLi
             }
         }
 
+        for (int i = 0; i < menu.size(); i++){
+            if (menu.getItem(i).hasSubMenu()){
+                collapseMenu(menu.getItem(i).getSubMenu(),level+1);
+            }
+        }
+        menu.add(Menu.NONE,99,Menu.NONE,"cancel");
     }
 
+    // Add a pre-populated SubMenu to another Menu
+    private void reMenu(Menu menu, MenuItem reMenu){
+        menu.addSubMenu(Menu.NONE,reMenu.getItemId(),Menu.NONE,reMenu.getTitle());
+        for (int i = 0; i < reMenu.getSubMenu().size(); i++){
+            if (reMenu.getSubMenu().getItem(i).hasSubMenu()){
+                menu.findItem(reMenu.getItemId()).getSubMenu().addSubMenu(Menu.NONE,reMenu.getSubMenu().getItem(i).getItemId(),Menu.NONE,reMenu.getSubMenu().getItem(i).getTitle());
+                reMenu(menu.findItem(reMenu.getItemId()).getSubMenu().findItem(reMenu.getSubMenu().getItem(i).getItemId()).getSubMenu(),reMenu.getSubMenu().getItem(i));
+            }
+            else{
+                menu.findItem(reMenu.getItemId()).getSubMenu().add(Menu.NONE,reMenu.getSubMenu().getItem(i).getItemId(),Menu.NONE,reMenu.getSubMenu().getItem(i).getTitle());
+            }
+        }
+    }
+
+    // Set menu item actions
     @Override
     public boolean onMenuItemSelected(int featureId, MenuItem item) {
         if (featureId == WindowUtils.FEATURE_VOICE_COMMANDS ||
@@ -324,12 +373,14 @@ public class MainActivity extends Activity implements MediaPlayer.OnCompletionLi
         return super.onMenuItemSelected(featureId, item);
     }
 
+    // When the menu is closed, refresh it
     @Override
     public void onPanelClosed (int featureId, Menu menu) {
         getWindow().invalidatePanelMenu(WindowUtils.FEATURE_VOICE_COMMANDS);
         invalidateOptionsMenu();
     }
 
+    // Set media resources based on slide position
     private void setMediaResources(int position){
         switch(position)
         {
@@ -357,7 +408,7 @@ public class MainActivity extends Activity implements MediaPlayer.OnCompletionLi
     }
 
     private void setCardScrollerListener() {
-
+        // When an item is selected, refresh the menu
         mCardScroller.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id)
@@ -371,6 +422,7 @@ public class MainActivity extends Activity implements MediaPlayer.OnCompletionLi
             public void onNothingSelected(AdapterView<?> parent) {}
         });
 
+        // Add sound effect when an slide is clicked
         mCardScroller.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override
@@ -393,10 +445,10 @@ public class MainActivity extends Activity implements MediaPlayer.OnCompletionLi
                 am.playSoundEffect(soundEffect);
                 openOptionsMenu();
             }
-
         });
     }
 
+    // Create the slides for the "powerpoint" view
     private List<CardBuilder> createCards(Context context) {
         ArrayList<CardBuilder> cards = new ArrayList<CardBuilder>();
         cards.add(SLIDE_ONE, new CardBuilder(context, CardBuilder.Layout.EMBED_INSIDE)
@@ -410,7 +462,4 @@ public class MainActivity extends Activity implements MediaPlayer.OnCompletionLi
 
         return cards;
     }
-
-
-
 }

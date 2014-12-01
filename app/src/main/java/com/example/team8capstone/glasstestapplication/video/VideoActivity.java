@@ -128,6 +128,7 @@ public final class VideoActivity extends Activity implements SurfaceHolder.Callb
         return super.onCreatePanelMenu(featureId, menu);
     }
 
+    // Set Menu Options
     @Override
     public boolean onPreparePanel(int featureId, View view, Menu menu) {
         if (featureId == WindowUtils.FEATURE_VOICE_COMMANDS ||

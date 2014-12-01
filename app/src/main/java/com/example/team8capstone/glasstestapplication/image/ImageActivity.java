@@ -21,9 +21,7 @@ import android.view.LayoutInflater;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 
-/**
- * Class that handles displaying full screen images
- */
+// Class that handles displaying full screen images
 public final class ImageActivity extends Activity {
 
     private CardScrollView mCardScroller;
@@ -123,6 +121,7 @@ public final class ImageActivity extends Activity {
         return super.onPreparePanel(featureId, view, menu);
     }
 
+    // Set Menu Options
     @Override
     public boolean onMenuItemSelected(int featureId, MenuItem item) {
         if (featureId == WindowUtils.FEATURE_VOICE_COMMANDS ||
@@ -152,6 +151,7 @@ public final class ImageActivity extends Activity {
         LayoutInflater vi = (LayoutInflater) getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View view = vi.inflate(R.layout.image_layout, null);
 
+        // Inflate the ImageView with the correct resource
         ImageView imageView = (ImageView) view.findViewById(R.id.image);
         imageView.setImageResource(resource);
 
