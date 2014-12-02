@@ -31,7 +31,7 @@ public final class ImageActivity extends Activity {
     private View mView;
     private int resource;
 
-    private static final String TAG = "ImageActivity";
+    private static final String TAG = "LogEntryStart";
 
     Time time = new Time();
 
@@ -96,14 +96,14 @@ public final class ImageActivity extends Activity {
         super.onResume();
         mCardScroller.activate();
         time.setToNow();
-        Log.i(TAG,time.toString() + ", " + "ImageActivity activated");
+        Log.i(TAG,time.toString() + ", " + "ImageActivity activated" + " LogEntryEnd");
     }
 
     @Override
     protected void onPause() {
         mCardScroller.deactivate();
         time.setToNow();
-        Log.i(TAG,time.toString() + ", " + "ImageActivity deactivated");
+        Log.i(TAG,time.toString() + ", " + "ImageActivity deactivated" + " LogEntryEnd");
         super.onPause();
     }
 
@@ -139,12 +139,12 @@ public final class ImageActivity extends Activity {
             switch (item.getItemId()) {
                 case R.id._exit:
                     time.setToNow();
-                    Log.i(TAG,time.toString() + ", " + "Exit selected");
+                    Log.i(TAG,time.toString() + ", " + "Exit selected" + " LogEntryEnd");
                     finish();
                     break;
                 default:
                     time.setToNow();
-                    Log.i(TAG,time.toString() + ", " + "Cancel selected");
+                    Log.i(TAG,time.toString() + ", " + "Cancel selected" + " LogEntryEnd");
                     return true;
             }
 
@@ -156,7 +156,7 @@ public final class ImageActivity extends Activity {
     @Override
     public boolean onMenuOpened (int featureId, Menu menu) {
         time.setToNow();
-        Log.i(TAG,time.toString() + ", " + "Menu opened");
+        Log.i(TAG,time.toString() + ", " + "Menu opened" + " LogEntryEnd");
         return true;
     }
 
@@ -165,7 +165,7 @@ public final class ImageActivity extends Activity {
         getWindow().invalidatePanelMenu(WindowUtils.FEATURE_VOICE_COMMANDS);
         invalidateOptionsMenu();
         time.setToNow();
-        Log.i(TAG,time.toString() + ", " + "Menu closed");
+        Log.i(TAG,time.toString() + ", " + "Menu closed" + " LogEntryEnd");
     }
 
     private View buildView() {

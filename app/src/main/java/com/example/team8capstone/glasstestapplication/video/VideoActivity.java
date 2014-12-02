@@ -40,7 +40,7 @@ public final class VideoActivity extends Activity implements SurfaceHolder.Callb
     private boolean isPaused = false;
     private SurfaceHolder surfaceHolder;
 
-    private static final String TAG = "VideoActivity";
+    private static final String TAG = "LogEntryStart";
 
     Time time = new Time();
 
@@ -116,14 +116,14 @@ public final class VideoActivity extends Activity implements SurfaceHolder.Callb
         super.onResume();
         mCardScroller.activate();
         time.setToNow();
-        Log.i(TAG,time.toString() + ", " + "VideoActivity activated");
+        Log.i(TAG,time.toString() + ", " + "VideoActivity activated" + " LogEntryEnd");
     }
 
     @Override
     protected void onPause() {
         mCardScroller.deactivate();
         time.setToNow();
-        Log.i(TAG,time.toString() + ", " + "VideoActivity deactivated");
+        Log.i(TAG,time.toString() + ", " + "VideoActivity deactivated" + " LogEntryEnd");
         super.onPause();
     }
 
@@ -133,7 +133,7 @@ public final class VideoActivity extends Activity implements SurfaceHolder.Callb
                 featureId == Window.FEATURE_OPTIONS_PANEL) {
             getMenuInflater().inflate(R.menu.video_menu, menu);
             time.setToNow();
-            Log.i(TAG,time.toString() + ", " + "Menu created");
+            Log.i(TAG,time.toString() + ", " + "Menu created" + " LogEntryEnd");
             return true;
         }
 
@@ -165,7 +165,7 @@ public final class VideoActivity extends Activity implements SurfaceHolder.Callb
                 menu.findItem(9).getSubMenu().add(Menu.NONE,R.id._cancel,Menu.NONE,"cancel");
             }
             time.setToNow();
-            Log.i(TAG,time.toString() + ", " + "Menu populated");
+            Log.i(TAG,time.toString() + ", " + "Menu populated" + " LogEntryEnd");
 
             // Dynamically decides between enabling/disabling voice menu.
             return mVoiceMenuEnabled;
@@ -182,29 +182,29 @@ public final class VideoActivity extends Activity implements SurfaceHolder.Callb
             switch (item.getItemId()) {
                 case R.id._exit:
                     time.setToNow();
-                    Log.i(TAG,time.toString() + ", " + "Exit selected");
+                    Log.i(TAG,time.toString() + ", " + "Exit selected" + " LogEntryEnd");
                     finish();
                     break;
                 case 1:
                     time.setToNow();
-                    Log.i(TAG,time.toString() + ", " + "MediaPlayer started");
+                    Log.i(TAG,time.toString() + ", " + "MediaPlayer started" + " LogEntryEnd");
                     mediaPlayer.start();
                     break;
                 case 4:
                     time.setToNow();
-                    Log.i(TAG,time.toString() + ", " + "MediaPlayer resumed");
+                    Log.i(TAG,time.toString() + ", " + "MediaPlayer resumed" + " LogEntryEnd");
                     mediaPlayer.start();
                     isPaused = false;
                     break;
                 case 5:
                     time.setToNow();
-                    Log.i(TAG,time.toString() + ", " + "MediaPlayer paused");
+                    Log.i(TAG,time.toString() + ", " + "MediaPlayer paused" + " LogEntryEnd");
                     mediaPlayer.pause();
                     isPaused = true;
                     break;
                 case 6:
                     time.setToNow();
-                    Log.i(TAG,time.toString() + ", " + "MediaPlayer rewinded");
+                    Log.i(TAG,time.toString() + ", " + "MediaPlayer rewinded" + " LogEntryEnd");
                     if (mediaPlayer.getCurrentPosition() < 3000){
                         mediaPlayer.seekTo(0);
                     }
@@ -214,7 +214,7 @@ public final class VideoActivity extends Activity implements SurfaceHolder.Callb
                     break;
                 case 7:
                     time.setToNow();
-                    Log.i(TAG,time.toString() + ", " + "MediaPlayer fast forwarded");
+                    Log.i(TAG,time.toString() + ", " + "MediaPlayer fast forwarded" + " LogEntryEnd");
                     if (mediaPlayer.getDuration() - mediaPlayer.getCurrentPosition() < 3000){
                         mediaPlayer.seekTo(mediaPlayer.getDuration());
                     }
@@ -224,13 +224,13 @@ public final class VideoActivity extends Activity implements SurfaceHolder.Callb
                     break;
                 case 8:
                     time.setToNow();
-                    Log.i(TAG,time.toString() + ", " + "MediaPlayer restarted");
+                    Log.i(TAG,time.toString() + ", " + "MediaPlayer restarted" + " LogEntryEnd");
                     mediaPlayer.seekTo(0);
                     isPaused = false;
                     break;
                 default:
                     time.setToNow();
-                    Log.i(TAG,time.toString() + ", " + "Cancel selected");
+                    Log.i(TAG,time.toString() + ", " + "Cancel selected" + " LogEntryEnd");
                     return true;
             }
 
@@ -242,7 +242,7 @@ public final class VideoActivity extends Activity implements SurfaceHolder.Callb
     @Override
     public boolean onMenuOpened (int featureId, Menu menu) {
         time.setToNow();
-        Log.i(TAG,time.toString() + ", " + "Menu opened");
+        Log.i(TAG,time.toString() + ", " + "Menu opened" + " LogEntryEnd");
         return true;
     }
 
@@ -251,7 +251,7 @@ public final class VideoActivity extends Activity implements SurfaceHolder.Callb
         getWindow().invalidatePanelMenu(WindowUtils.FEATURE_VOICE_COMMANDS);
         invalidateOptionsMenu();
         time.setToNow();
-        Log.i(TAG,time.toString() + ", " + "Menu closed");
+        Log.i(TAG,time.toString() + ", " + "Menu closed" + " LogEntryEnd");
     }
 
     private View buildView() {
@@ -266,7 +266,7 @@ public final class VideoActivity extends Activity implements SurfaceHolder.Callb
 
     private void playVideo() {
         time.setToNow();
-        Log.i(TAG,time.toString() + ", " + "MediaPlayer started");
+        Log.i(TAG,time.toString() + ", " + "MediaPlayer started" + " LogEntryEnd");
         mediaPlayer.start();
     }
 
