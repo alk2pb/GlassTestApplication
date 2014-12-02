@@ -11,6 +11,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.media.AudioManager;
 import android.os.Bundle;
+import android.text.format.Time;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -28,6 +30,10 @@ public final class ImageActivity extends Activity {
     private boolean mVoiceMenuEnabled = true;
     private View mView;
     private int resource;
+
+    private static final String TAG = "ImageActivity";
+
+    Time time = new Time();
 
     @Override
     protected void onCreate(Bundle bundle) {
@@ -89,11 +95,15 @@ public final class ImageActivity extends Activity {
     protected void onResume() {
         super.onResume();
         mCardScroller.activate();
+        time.setToNow();
+        Log.i(TAG,time.toString() + ", " + "ImageActivity activated");
     }
 
     @Override
     protected void onPause() {
         mCardScroller.deactivate();
+        time.setToNow();
+        Log.i(TAG,time.toString() + ", " + "ImageActivity deactivated");
         super.onPause();
     }
 
@@ -128,11 +138,13 @@ public final class ImageActivity extends Activity {
                 featureId == Window.FEATURE_OPTIONS_PANEL) {
             switch (item.getItemId()) {
                 case R.id._exit:
+                    time.setToNow();
+                    Log.i(TAG,time.toString() + ", " + "Exit selected");
                     finish();
                     break;
-                case R.id._cancel:
-                    break;
                 default:
+                    time.setToNow();
+                    Log.i(TAG,time.toString() + ", " + "Cancel selected");
                     return true;
             }
 
@@ -142,9 +154,18 @@ public final class ImageActivity extends Activity {
     }
 
     @Override
+    public boolean onMenuOpened (int featureId, Menu menu) {
+        time.setToNow();
+        Log.i(TAG,time.toString() + ", " + "Menu opened");
+        return true;
+    }
+
+    @Override
     public void onPanelClosed (int featureId, Menu menu) {
         getWindow().invalidatePanelMenu(WindowUtils.FEATURE_VOICE_COMMANDS);
         invalidateOptionsMenu();
+        time.setToNow();
+        Log.i(TAG,time.toString() + ", " + "Menu closed");
     }
 
     private View buildView() {

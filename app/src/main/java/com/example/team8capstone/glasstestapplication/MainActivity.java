@@ -15,6 +15,9 @@ import android.content.Intent;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.os.Environment;
+import android.util.Log;
+import android.text.format.Time;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -24,6 +27,13 @@ import android.widget.AdapterView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.lang.Runtime;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.IOException;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 
 // MainActivity creates the main "powerpoint" view and navigation menu
 public class MainActivity extends Activity implements MediaPlayer.OnCompletionListener {
@@ -49,6 +59,14 @@ public class MainActivity extends Activity implements MediaPlayer.OnCompletionLi
     private Intent image;
     private Intent video;
 
+    private static final String TAG = "MainActivity";
+
+    private StringBuilder log=new StringBuilder();
+
+    private Time time = new Time();
+
+    private String logDirectory = Environment.getExternalStorageDirectory().toString();
+
     @Override
     protected void onCreate(Bundle bundle) {
         super.onCreate(bundle);
@@ -73,6 +91,20 @@ public class MainActivity extends Activity implements MediaPlayer.OnCompletionLi
         mCardScroller.setAdapter(mAdapter);
         setCardScrollerListener();
         setContentView(mCardScroller);
+
+        try {
+            Process process = Runtime.getRuntime().exec("logcat -d");
+            BufferedReader bufferedReader = new BufferedReader(
+                    new InputStreamReader(process.getInputStream()));
+
+
+            String line = "";
+            while ((line = bufferedReader.readLine()) != null) {
+                log.append(line);
+            }
+
+        } catch (IOException e) {
+        }
     }
 
     // When the MediaPlayer finishes, close and refresh the menu
@@ -85,6 +117,9 @@ public class MainActivity extends Activity implements MediaPlayer.OnCompletionLi
     protected void onResume() {
         super.onResume();
         mCardScroller.activate();
+        time.setToNow();
+        Log.i(TAG, time.toString() + ", " + "MainActivity activated");
+        Log.i(TAG,time.toString() + ", " + "Current Slide:" + mCardScroller.getSelectedItemPosition());
     }
 
     @Override
@@ -94,6 +129,8 @@ public class MainActivity extends Activity implements MediaPlayer.OnCompletionLi
         }
 
         mCardScroller.deactivate();
+        time.setToNow();
+        Log.i(TAG, time.toString() + ", " + "MainActivity deactivated");
         super.onPause();
     }
 
@@ -101,6 +138,18 @@ public class MainActivity extends Activity implements MediaPlayer.OnCompletionLi
     protected void onDestroy() {
         // Release the MediaPlayer when the activity finishes
         mediaPlayer.release();
+        time.setToNow();
+        Log.i(TAG,time.toString() + ", " + "MainActivity destroyed");
+        try {
+            File file = new File(Environment.getExternalStorageDirectory()+"/"+Environment.DIRECTORY_MOVIES + "/log.txt");
+
+            BufferedWriter output = new BufferedWriter(new FileWriter(file));
+            output.write(log.toString());
+            output.close();
+        }
+        catch (Exception e){
+            Log.e(TAG,e.getMessage());
+        }
         super.onDestroy();
     }
 
@@ -109,6 +158,8 @@ public class MainActivity extends Activity implements MediaPlayer.OnCompletionLi
         if (featureId == WindowUtils.FEATURE_VOICE_COMMANDS ||
                 featureId == Window.FEATURE_OPTIONS_PANEL) {
             getMenuInflater().inflate(R.menu.voice_menu, menu);
+            time.setToNow();
+            Log.i(TAG,time.toString() + ", " + "Menu created");
             return true;
         }
         // Good practice to pass through, for options menu.
@@ -132,6 +183,8 @@ public class MainActivity extends Activity implements MediaPlayer.OnCompletionLi
             }
 
             collapseMenu(menu,1);
+            time.setToNow();
+            Log.i(TAG,time.toString() + ", " + "Menu populated");
 
           // Dynamically decides between enabling/disabling voice menu.
           return mVoiceMenuEnabled;
@@ -296,28 +349,42 @@ public class MainActivity extends Activity implements MediaPlayer.OnCompletionLi
                 featureId == Window.FEATURE_OPTIONS_PANEL) {
             switch (item.getItemId()) {
                 case 0:
+                    time.setToNow();
+                    Log.i(TAG,time.toString() + ", " + "ImageActivity started");
                     startActivity(image);
                     break;
                 case 1:
+                    time.setToNow();
+                    Log.i(TAG,time.toString() + ", " + "MediaPlayer started");
                     mediaPlayer.start();
                     break;
                 case 2:
+                    time.setToNow();
+                    Log.i(TAG,time.toString() + ", " + "VideoActivity started");
                     startActivity(video);
                     break;
                 case 3:
+                    time.setToNow();
+                    Log.i(TAG,time.toString() + ", " + "MediaPlayer stopped");
                     mediaPlayer.pause();
                     mediaPlayer.seekTo(0);
                     isPaused = false;
                     break;
                 case 4:
+                    time.setToNow();
+                    Log.i(TAG,time.toString() + ", " + "MediaPlayer resumed");
                     mediaPlayer.start();
                     isPaused = false;
                     break;
                 case 5:
+                    time.setToNow();
+                    Log.i(TAG,time.toString() + ", " + "MediaPlayer paused");
                     mediaPlayer.pause();
                     isPaused = true;
                     break;
                 case 6:
+                    time.setToNow();
+                    Log.i(TAG,time.toString() + ", " + "MediaPlayer rewinded");
                     if (mediaPlayer.getCurrentPosition() < 3000){
                         mediaPlayer.seekTo(0);
                     }
@@ -326,6 +393,8 @@ public class MainActivity extends Activity implements MediaPlayer.OnCompletionLi
                     }
                     break;
                 case 7:
+                    time.setToNow();
+                    Log.i(TAG,time.toString() + ", " + "ImageActivity fast forwarded");
                     if (mediaPlayer.getDuration() - mediaPlayer.getCurrentPosition() < 3000){
                         mediaPlayer.seekTo(mediaPlayer.getDuration());
                     }
@@ -334,6 +403,8 @@ public class MainActivity extends Activity implements MediaPlayer.OnCompletionLi
                     }
                     break;
                 case 8:
+                    time.setToNow();
+                    Log.i(TAG,time.toString() + ", " + "MediaPlayer restarted");
                     mediaPlayer.seekTo(0);
                     isPaused = false;
                     break;
@@ -342,27 +413,41 @@ public class MainActivity extends Activity implements MediaPlayer.OnCompletionLi
                     {
                         mCardScroller.setSelection(mCardScroller.getSelectedItemPosition() + 1);
                     }
+                    time.setToNow();
+                    Log.i(TAG,time.toString() + ", " + "Next slide selected");
                     break;
                 case 11:
                     if (mCardScroller.getSelectedItemPosition() > 0)
                     {
                         mCardScroller.setSelection(mCardScroller.getSelectedItemPosition() - 1);
                     }
+                    time.setToNow();
+                    Log.i(TAG,time.toString() + ", " + "Previous slide selected");
                     break;
                 case 14:
+                    time.setToNow();
+                    Log.i(TAG,time.toString() + ", " + "Exit selected");
                     finish();
                     break;
                 case SLIDE_ONE_MENU:
                     mCardScroller.setSelection(0);
+                    time.setToNow();
+                    Log.i(TAG,time.toString() + ", " + "Goto selected");
                     break;
                 case SLIDE_TWO_MENU:
                     mCardScroller.setSelection(1);
+                    time.setToNow();
+                    Log.i(TAG,time.toString() + ", " + "Goto selected");
                     break;
                 case SLIDE_THREE_MENU:
                     mCardScroller.setSelection(2);
+                    time.setToNow();
+                    Log.i(TAG,time.toString() + ", " + "Goto selected");
                     break;
                 case SLIDE_FOUR_MENU:
                     mCardScroller.setSelection(3);
+                    time.setToNow();
+                    Log.i(TAG,time.toString() + ", " + "Goto selected");
                     break;
                 default:
                     return true;
@@ -373,11 +458,20 @@ public class MainActivity extends Activity implements MediaPlayer.OnCompletionLi
         return super.onMenuItemSelected(featureId, item);
     }
 
+    @Override
+    public boolean onMenuOpened (int featureId, Menu menu) {
+        time.setToNow();
+        Log.i(TAG,time.toString() + ", " + "Menu opened");
+        return true;
+    }
+
     // When the menu is closed, refresh it
     @Override
     public void onPanelClosed (int featureId, Menu menu) {
         getWindow().invalidatePanelMenu(WindowUtils.FEATURE_VOICE_COMMANDS);
         invalidateOptionsMenu();
+        time.setToNow();
+        Log.i(TAG,time.toString() + ", " + "Menu closed");
     }
 
     // Set media resources based on slide position
@@ -416,6 +510,9 @@ public class MainActivity extends Activity implements MediaPlayer.OnCompletionLi
                 getWindow().invalidatePanelMenu(WindowUtils.FEATURE_VOICE_COMMANDS);
                 invalidateOptionsMenu();
                 setMediaResources(mCardScroller.getSelectedItemPosition());
+                time.setToNow();
+                Log.i(TAG,time.toString() + ", " + "New slide selected");
+                Log.i(TAG,time.toString() + ", " + "Current slide: " + mCardScroller.getSelectedItemPosition());
             }
 
             @Override
@@ -440,6 +537,8 @@ public class MainActivity extends Activity implements MediaPlayer.OnCompletionLi
                     default:
                         soundEffect = Sounds.ERROR;
                 }
+                time.setToNow();
+                Log.i(TAG,time.toString() + ", " + "Slide " + mCardScroller.getSelectedItemPosition() + " tapped");
                 // Play sound.
                 AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
                 am.playSoundEffect(soundEffect);

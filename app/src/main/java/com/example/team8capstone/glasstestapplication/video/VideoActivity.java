@@ -12,6 +12,8 @@ import android.content.Context;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.text.format.Time;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -37,6 +39,10 @@ public final class VideoActivity extends Activity implements SurfaceHolder.Callb
     private MediaPlayer mediaPlayer = new MediaPlayer();
     private boolean isPaused = false;
     private SurfaceHolder surfaceHolder;
+
+    private static final String TAG = "VideoActivity";
+
+    Time time = new Time();
 
     @Override
     protected void onCreate(Bundle bundle) {
@@ -109,11 +115,15 @@ public final class VideoActivity extends Activity implements SurfaceHolder.Callb
     protected void onResume() {
         super.onResume();
         mCardScroller.activate();
+        time.setToNow();
+        Log.i(TAG,time.toString() + ", " + "VideoActivity activated");
     }
 
     @Override
     protected void onPause() {
         mCardScroller.deactivate();
+        time.setToNow();
+        Log.i(TAG,time.toString() + ", " + "VideoActivity deactivated");
         super.onPause();
     }
 
@@ -122,8 +132,11 @@ public final class VideoActivity extends Activity implements SurfaceHolder.Callb
         if (featureId == WindowUtils.FEATURE_VOICE_COMMANDS ||
                 featureId == Window.FEATURE_OPTIONS_PANEL) {
             getMenuInflater().inflate(R.menu.video_menu, menu);
+            time.setToNow();
+            Log.i(TAG,time.toString() + ", " + "Menu created");
             return true;
         }
+
         // Good practice to pass through, for options menu.
         return super.onCreatePanelMenu(featureId, menu);
     }
@@ -151,6 +164,8 @@ public final class VideoActivity extends Activity implements SurfaceHolder.Callb
                 menu.findItem(9).getSubMenu().add(Menu.NONE,8,Menu.NONE,"play from beginning");
                 menu.findItem(9).getSubMenu().add(Menu.NONE,R.id._cancel,Menu.NONE,"cancel");
             }
+            time.setToNow();
+            Log.i(TAG,time.toString() + ", " + "Menu populated");
 
             // Dynamically decides between enabling/disabling voice menu.
             return mVoiceMenuEnabled;
@@ -166,22 +181,30 @@ public final class VideoActivity extends Activity implements SurfaceHolder.Callb
                 featureId == Window.FEATURE_OPTIONS_PANEL) {
             switch (item.getItemId()) {
                 case R.id._exit:
+                    time.setToNow();
+                    Log.i(TAG,time.toString() + ", " + "Exit selected");
                     finish();
                     break;
-                case R.id._cancel:
-                    break;
                 case 1:
+                    time.setToNow();
+                    Log.i(TAG,time.toString() + ", " + "MediaPlayer started");
                     mediaPlayer.start();
                     break;
                 case 4:
+                    time.setToNow();
+                    Log.i(TAG,time.toString() + ", " + "MediaPlayer resumed");
                     mediaPlayer.start();
                     isPaused = false;
                     break;
                 case 5:
+                    time.setToNow();
+                    Log.i(TAG,time.toString() + ", " + "MediaPlayer paused");
                     mediaPlayer.pause();
                     isPaused = true;
                     break;
                 case 6:
+                    time.setToNow();
+                    Log.i(TAG,time.toString() + ", " + "MediaPlayer rewinded");
                     if (mediaPlayer.getCurrentPosition() < 3000){
                         mediaPlayer.seekTo(0);
                     }
@@ -190,6 +213,8 @@ public final class VideoActivity extends Activity implements SurfaceHolder.Callb
                     }
                     break;
                 case 7:
+                    time.setToNow();
+                    Log.i(TAG,time.toString() + ", " + "MediaPlayer fast forwarded");
                     if (mediaPlayer.getDuration() - mediaPlayer.getCurrentPosition() < 3000){
                         mediaPlayer.seekTo(mediaPlayer.getDuration());
                     }
@@ -198,10 +223,14 @@ public final class VideoActivity extends Activity implements SurfaceHolder.Callb
                     }
                     break;
                 case 8:
+                    time.setToNow();
+                    Log.i(TAG,time.toString() + ", " + "MediaPlayer restarted");
                     mediaPlayer.seekTo(0);
                     isPaused = false;
                     break;
                 default:
+                    time.setToNow();
+                    Log.i(TAG,time.toString() + ", " + "Cancel selected");
                     return true;
             }
 
@@ -211,9 +240,18 @@ public final class VideoActivity extends Activity implements SurfaceHolder.Callb
     }
 
     @Override
+    public boolean onMenuOpened (int featureId, Menu menu) {
+        time.setToNow();
+        Log.i(TAG,time.toString() + ", " + "Menu opened");
+        return true;
+    }
+
+    @Override
     public void onPanelClosed (int featureId, Menu menu) {
         getWindow().invalidatePanelMenu(WindowUtils.FEATURE_VOICE_COMMANDS);
         invalidateOptionsMenu();
+        time.setToNow();
+        Log.i(TAG,time.toString() + ", " + "Menu closed");
     }
 
     private View buildView() {
@@ -227,6 +265,8 @@ public final class VideoActivity extends Activity implements SurfaceHolder.Callb
     }
 
     private void playVideo() {
+        time.setToNow();
+        Log.i(TAG,time.toString() + ", " + "MediaPlayer started");
         mediaPlayer.start();
     }
 
@@ -243,7 +283,5 @@ public final class VideoActivity extends Activity implements SurfaceHolder.Callb
         }
     }
 
-    public void surfaceChanged(SurfaceHolder holder, int format, int width, int height)
-    {
-    }
+    public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {}
 }
