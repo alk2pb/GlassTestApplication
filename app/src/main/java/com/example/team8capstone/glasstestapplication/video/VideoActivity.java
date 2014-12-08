@@ -109,6 +109,7 @@ public final class VideoActivity extends Activity implements SurfaceHolder.Callb
     public void onCompletion(MediaPlayer mediaplayer) {
         getWindow().closePanel(WindowUtils.FEATURE_VOICE_COMMANDS);
         closeOptionsMenu();
+        finish();
     }
 
     @Override
