@@ -37,17 +37,8 @@ import java.io.FileWriter;
 
 // MainActivity creates the main "powerpoint" view and navigation menu
 public class MainActivity extends Activity implements MediaPlayer.OnCompletionListener {
-    // Instantiates final int's that specify slide positions
-    static final int SLIDE_ONE = 0;
-    static final int SLIDE_TWO = 1;
-    static final int SLIDE_THREE = 2;
-    static final int SLIDE_FOUR = 3;
-
-    // Instantiates final int's that specify slide id's in the menu
-    static final int SLIDE_ONE_MENU = 20 + SLIDE_ONE;
-    static final int SLIDE_TWO_MENU = 20 + SLIDE_TWO;
-    static final int SLIDE_THREE_MENU = 20 + SLIDE_THREE;
-    static final int SLIDE_FOUR_MENU = 20 + SLIDE_FOUR;
+    // Array of Card Infos
+    private ArrayList<CardInfo> cardInfos = new ArrayList<CardInfo>();
 
     // Other variables used (name is self explanatory)
     private CardScrollView mCardScroller;
@@ -69,6 +60,9 @@ public class MainActivity extends Activity implements MediaPlayer.OnCompletionLi
     protected void onCreate(Bundle bundle) {
         super.onCreate(bundle);
 
+        // Sets Card Info
+        setCardInfo();
+
         // Instantiates a new intent for the ImageActivity that will be activated when
         // the user wishes to view a picture
         image = new Intent(this, ImageActivity.class);
@@ -85,7 +79,7 @@ public class MainActivity extends Activity implements MediaPlayer.OnCompletionLi
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         mCardScroller = new CardScrollView(this);
-        mAdapter = new CardAdapter(createCards(this), this);
+        mAdapter = new CardAdapter(createCards(this), this, cardInfos);
         mCardScroller.setAdapter(mAdapter);
         setCardScrollerListener();
         setContentView(mCardScroller);
@@ -204,60 +198,39 @@ public class MainActivity extends Activity implements MediaPlayer.OnCompletionLi
 
     private void setGotoMenuOptions(Menu menu, int position) {
         // Add menu options based on slide position
-        switch(position)
-        {
-            case SLIDE_ONE:
-                menu.findItem(12).getSubMenu().add(Menu.NONE,SLIDE_TWO_MENU,Menu.NONE,"2");
-                menu.findItem(12).getSubMenu().add(Menu.NONE,SLIDE_THREE_MENU,Menu.NONE,"3");
-                menu.findItem(12).getSubMenu().add(Menu.NONE,SLIDE_FOUR_MENU,Menu.NONE,"4");
-                break;
-            case SLIDE_TWO:
-                menu.findItem(12).getSubMenu().add(Menu.NONE,SLIDE_ONE_MENU,Menu.NONE,"1");
-                menu.findItem(12).getSubMenu().add(Menu.NONE,SLIDE_THREE_MENU,Menu.NONE,"3");
-                menu.findItem(12).getSubMenu().add(Menu.NONE,SLIDE_FOUR_MENU,Menu.NONE,"4");
-                break;
-            case SLIDE_THREE:
-                menu.findItem(12).getSubMenu().add(Menu.NONE,SLIDE_ONE_MENU,Menu.NONE,"1");
-                menu.findItem(12).getSubMenu().add(Menu.NONE,SLIDE_TWO_MENU,Menu.NONE,"2");
-                menu.findItem(12).getSubMenu().add(Menu.NONE,SLIDE_FOUR_MENU,Menu.NONE,"4");
-                break;
-            case SLIDE_FOUR:
-                menu.findItem(12).getSubMenu().add(Menu.NONE,SLIDE_ONE_MENU,Menu.NONE,"1");
-                menu.findItem(12).getSubMenu().add(Menu.NONE,SLIDE_TWO_MENU,Menu.NONE,"2");
-                menu.findItem(12).getSubMenu().add(Menu.NONE,SLIDE_THREE_MENU,Menu.NONE,"3");
-                break;
-            default:
-                break;
+        for (CardInfo cardInfo : cardInfos){
+            menu.findItem(12).getSubMenu().add(Menu.NONE,cardInfo.goTo,Menu.NONE,Integer.toString(cardInfo.slideNumber + 1));
         }
     }
 
     private void addCustomMenuOptions(Menu menu, int position){
-        // Add menu options based on slide position
-        switch(position)
-        {
-            case SLIDE_ONE:
-                menu.removeItem(11);
-                menu.findItem(12).getSubMenu().removeItem(SLIDE_ONE_MENU);
-                menu.add(Menu.NONE,0,Menu.NONE,"view picture");
-                break;
-            case SLIDE_TWO:
-                menu.add(Menu.NONE,2,Menu.NONE,"play video");
-                menu.findItem(12).getSubMenu().removeItem(SLIDE_TWO_MENU);
-                break;
-            case SLIDE_THREE:
-                menu.findItem(12).getSubMenu().removeItem(SLIDE_THREE_MENU);
-                if (!mediaPlayer.isPlaying() && !isPaused) {
-                    menu.add(Menu.NONE,1,Menu.NONE,"play audio");
-                }
-                break;
-            case SLIDE_FOUR:
-                menu.removeItem(10);
-                menu.findItem(12).getSubMenu().removeItem(SLIDE_FOUR_MENU);
-                menu.add(Menu.NONE,0,Menu.NONE,"view picture");
-                break;
-            default:
-                break;
+
+        // Add and adjust menu options based on slide content
+        menu.findItem(12).getSubMenu().removeItem(cardInfos.get(0).offset + position);
+
+        if (position == 0){
+            menu.removeItem(11);
         }
+
+        if (position == mCardScroller.getChildCount()){
+            menu.removeItem(10);
+        }
+
+
+        if (cardInfos.get(position).hasImage){
+            menu.add(Menu.NONE,0,Menu.NONE,"view picture");
+        }
+
+        if (cardInfos.get(position).hasAudio){
+            if (!mediaPlayer.isPlaying() && !isPaused) {
+                menu.add(Menu.NONE,1,Menu.NONE,"play audio");
+            }
+        }
+
+        if (cardInfos.get(position).hasVideo){
+            menu.add(Menu.NONE,2,Menu.NONE,"play video");
+        }
+
     }
 
     private void addAudioMenuOptions(Menu menu){
@@ -427,30 +400,17 @@ public class MainActivity extends Activity implements MediaPlayer.OnCompletionLi
                     Log.i(TAG,time.toString() + ", " + "Exit selected" + " LogEntryEnd");
                     finish();
                     break;
-                case SLIDE_ONE_MENU:
-                    mCardScroller.setSelection(0);
-                    time.setToNow();
-                    Log.i(TAG,time.toString() + ", " + "Goto selected" + " LogEntryEnd");
-                    break;
-                case SLIDE_TWO_MENU:
-                    mCardScroller.setSelection(1);
-                    time.setToNow();
-                    Log.i(TAG,time.toString() + ", " + "Goto selected" + " LogEntryEnd");
-                    break;
-                case SLIDE_THREE_MENU:
-                    mCardScroller.setSelection(2);
-                    time.setToNow();
-                    Log.i(TAG,time.toString() + ", " + "Goto selected" + " LogEntryEnd");
-                    break;
-                case SLIDE_FOUR_MENU:
-                    mCardScroller.setSelection(3);
-                    time.setToNow();
-                    Log.i(TAG,time.toString() + ", " + "Goto selected" + " LogEntryEnd");
-                    break;
                 default:
+                    for (CardInfo cardInfo : cardInfos){
+                        if (item.getItemId() == cardInfo.goTo){
+                            mCardScroller.setSelection(cardInfo.slideNumber);
+                            time.setToNow();
+                            Log.i(TAG,time.toString() + ", " + "Goto selected" + " LogEntryEnd");
+                            return true;
+                        }
+                    }
                     return true;
             }
-
             return true;
         }
         return super.onMenuItemSelected(featureId, item);
@@ -474,28 +434,21 @@ public class MainActivity extends Activity implements MediaPlayer.OnCompletionLi
 
     // Set media resources based on slide position
     private void setMediaResources(int position){
-        switch(position)
-        {
-            case SLIDE_ONE:
-                image.removeExtra("resource");
-                image.putExtra("resource", R.drawable.beach);
-                break;
-            case SLIDE_TWO:
-                video.removeExtra("resource");
-                video.putExtra("resource", R.raw.video_file_1);
-                break;
-            case SLIDE_THREE:
-                if (!mediaPlayer.isPlaying() && !isPaused) {
-                    mediaPlayer = MediaPlayer.create(MainActivity.this, R.raw.sound_file_1);
-                    mediaPlayer.setOnCompletionListener(MainActivity.this);
-                }
-                break;
-            case SLIDE_FOUR:
-                image.removeExtra("resource");
-                image.putExtra("resource", R.drawable.supplies);
-                break;
-            default:
-                break;
+        if (cardInfos.get(position).hasImage){
+            image.removeExtra("resource");
+            image.putExtra("resource", cardInfos.get(position).imageResource);
+        }
+
+        if (cardInfos.get(position).hasAudio){
+            if (!mediaPlayer.isPlaying() && !isPaused) {
+                mediaPlayer = MediaPlayer.create(MainActivity.this, cardInfos.get(position).audioResource);
+                mediaPlayer.setOnCompletionListener(MainActivity.this);
+            }
+        }
+
+        if (cardInfos.get(position).hasVideo){
+            video.removeExtra("resource");
+            video.putExtra("resource", cardInfos.get(position).videoResource);
         }
     }
 
@@ -523,18 +476,6 @@ public class MainActivity extends Activity implements MediaPlayer.OnCompletionLi
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 int soundEffect = Sounds.TAP;
-                switch (position) {
-                    case SLIDE_ONE:
-                        break;
-                    case SLIDE_TWO:
-                        break;
-                    case SLIDE_THREE:
-                        break;
-                    case SLIDE_FOUR:
-                        break;
-                    default:
-                        soundEffect = Sounds.ERROR;
-                }
                 time.setToNow();
                 Log.i(TAG,time.toString() + ", " + "Slide " + mCardScroller.getSelectedItemPosition() + " tapped" + " LogEntryEnd");
                 // Play sound.
@@ -548,15 +489,46 @@ public class MainActivity extends Activity implements MediaPlayer.OnCompletionLi
     // Create the slides for the "powerpoint" view
     private List<CardBuilder> createCards(Context context) {
         ArrayList<CardBuilder> cards = new ArrayList<CardBuilder>();
-        cards.add(SLIDE_ONE, new CardBuilder(context, CardBuilder.Layout.EMBED_INSIDE)
-                .setEmbeddedLayout(R.layout.left_column_layout));
-        cards.add(SLIDE_TWO, new CardBuilder(context, CardBuilder.Layout.TEXT)
-                .setText("Test"));
-        cards.add(SLIDE_THREE, new CardBuilder(context, CardBuilder.Layout.TEXT)
-                .setText("Test"));
-        cards.add(SLIDE_FOUR, new CardBuilder(context, CardBuilder.Layout.EMBED_INSIDE)
-                .setEmbeddedLayout(R.layout.left_column_layout));
 
+        for (CardInfo cardInfo : cardInfos){
+            if (cardInfo.hasXmlLayout){
+                cards.add(cardInfo.slideNumber, new CardBuilder(context,cardInfo.layout)
+                        .setEmbeddedLayout(cardInfo.xmlLayout));
+            }
+            else {
+                CardBuilder cardBuilder = new CardBuilder(context,cardInfo.layout);
+
+                if (cardInfo.hasText){
+                    cardBuilder.setText(cardInfo.text);
+                }
+
+                cards.add(cardInfo.slideNumber, cardBuilder);
+            }
+        }
         return cards;
+    }
+
+    // Set Card Info
+    private void setCardInfo() {
+        cardInfos.add(new CardInfo(cardInfos.size(), CardBuilder.Layout.EMBED_INSIDE)
+                .setXmlLayout(R.layout.left_column_layout)
+                .setImageResource(R.drawable.beach)
+                .setHeader("Test"));
+        cardInfos.add(new CardInfo(cardInfos.size(), CardBuilder.Layout.TEXT)
+                .setVideoResource(R.raw.video_file_1)
+                .setText("Test"));
+        cardInfos.add(new CardInfo(cardInfos.size(), CardBuilder.Layout.TEXT)
+                .setAudioResource(R.raw.sound_file_1)
+                .setText("Test"));
+        cardInfos.add(new CardInfo(cardInfos.size(), CardBuilder.Layout.EMBED_INSIDE)
+                .setXmlLayout(R.layout.left_column_layout)
+                .setImageResource(R.drawable.supplies)
+                .setHeader("Step 1: Gather Supplies")
+                .setText("• Stepstool\n" +
+                        "• Acrylic yarn\n" +
+                        "• Pulling comb\n" +
+                        "• Rug Hook\n" +
+                        "• Small bucket of clean water\n" +
+                        "• Quic Braid (optional)"));
     }
 }

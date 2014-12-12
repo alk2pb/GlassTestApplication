@@ -18,11 +18,13 @@ import java.util.List;
 public class CardAdapter extends CardScrollAdapter {
 
     final List<CardBuilder> mCards;
+    final List<CardInfo> mCardInfos;
 
     Context c;
 
-    public CardAdapter(List<CardBuilder> cards, Context context) {
+    public CardAdapter(List<CardBuilder> cards, Context context, List<CardInfo> cardInfos) {
         mCards = cards;
+        mCardInfos = cardInfos;
         c = context;
     }
 
@@ -40,44 +42,35 @@ public class CardAdapter extends CardScrollAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         View view = mCards.get(position).getView(convertView, parent);
 
-        switch (position)
-        {
-            case 0:
-                ViewGroup rightColumn0 = (ViewGroup) view.findViewById(R.id.right_column);
-                ImageView imageView0 = (ImageView) rightColumn0.findViewById(R.id.image);
-                imageView0.setImageResource(R.drawable.beach);
+        if (mCardInfos.get(position).hasXmlLayout){
+            switch (mCardInfos.get(position).xmlLayout){
+                case R.layout.left_column_layout:
+                    ViewGroup rightColumn = (ViewGroup) view.findViewById(R.id.right_column);
 
-                ViewGroup leftColumn0 = (ViewGroup) view.findViewById(R.id.left_column);
-                TextView textViewHeader0 = (TextView) leftColumn0.findViewById(R.id.header);
-                textViewHeader0.setText("Test");
-                textViewHeader0.setTextSize(30);
+                    if (mCardInfos.get(position).hasImage){
+                        ImageView imageView = (ImageView) rightColumn.findViewById(R.id.image);
+                        imageView.setImageResource(mCardInfos.get(position).imageResource);
+                    }
 
-                return view;
-            case 3:
-                ViewGroup rightColumn3 = (ViewGroup) view.findViewById(R.id.right_column);
-                ImageView imageView3 = (ImageView) rightColumn3.findViewById(R.id.image);
-                imageView3.setImageResource(R.drawable.supplies);
+                    ViewGroup leftColumn = (ViewGroup) view.findViewById(R.id.left_column);
 
-                ViewGroup leftColumn3 = (ViewGroup) view.findViewById(R.id.left_column);
-                TextView textViewHeader3 = (TextView) leftColumn3.findViewById(R.id.header);
-                textViewHeader3.setText("Step 1: Gather Supplies");
-                textViewHeader3.setTextSize(16);
+                    if (mCardInfos.get(position).hasHeader) {
+                        TextView textViewHeader = (TextView) leftColumn.findViewById(R.id.header);
+                        textViewHeader.setText(mCardInfos.get(position).header);
+                        textViewHeader.setTextSize(mCardInfos.get(position).headerTextSize);
+                    }
 
-                TextView textViewContent3 = (TextView) leftColumn3.findViewById(R.id.content);
-                textViewContent3.setText("• Stepstool\n" +
-                        "• Acrylic yarn\n" +
-                        "• Pulling comb\n" +
-                        "• Rug Hook\n" +
-                        "• Small bucket of clean water\n" +
-                        "• Quic Braid (optional)");
-                textViewContent3.setTextSize(14);
-
-                return view;
-            default:
-                return view;
-
+                    if (mCardInfos.get(position).hasText) {
+                        TextView textViewContent = (TextView) leftColumn.findViewById(R.id.content);
+                        textViewContent.setText(mCardInfos.get(position).text);
+                        textViewContent.setTextSize(mCardInfos.get(position).textSize);
+                    }
+                    return view;
+                default:
+                    return view;
+            }
         }
-
+        return view;
     }
 
     @Override
