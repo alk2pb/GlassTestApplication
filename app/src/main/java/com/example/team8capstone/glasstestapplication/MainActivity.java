@@ -198,8 +198,13 @@ public class MainActivity extends Activity implements MediaPlayer.OnCompletionLi
 
     private void setGotoMenuOptions(Menu menu, int position) {
         // Add menu options based on slide position
-        for (CardInfo cardInfo : cardInfos){
-            menu.findItem(12).getSubMenu().add(Menu.NONE,cardInfo.goTo,Menu.NONE,Integer.toString(cardInfo.slideNumber + 1));
+        for (CardInfo cardInfo : cardInfos) {
+            if (!cardInfo.hasHeader) {
+                menu.findItem(12).getSubMenu().add(Menu.NONE, cardInfo.goTo, Menu.NONE, Integer.toString(cardInfo.slideNumber + 1));
+            }
+            else {
+                menu.findItem(12).getSubMenu().add(Menu.NONE, cardInfo.goTo, Menu.NONE, cardInfo.header);
+            }
         }
     }
 
@@ -530,5 +535,96 @@ public class MainActivity extends Activity implements MediaPlayer.OnCompletionLi
                         "• Rug Hook\n" +
                         "• Small bucket of clean water\n" +
                         "• Quic Braid (optional)"));
+        cardInfos.add(new CardInfo(cardInfos.size(), CardBuilder.Layout.EMBED_INSIDE)
+                .setXmlLayout(R.layout.left_column_layout)
+                .setHeader("Getting to know the tie")
+                .setText("• Skinny End\n" +
+                        "• Fat End\n" +
+                        "• Face End (Smooth)\n" +
+                        "• Seam Side")
+                .setVideoResource(R.raw.GetToKnowTie1));
+        cardInfos.add(new CardInfo(cardInfos.size(), CardBuilder.Layout.EMBED_INSIDE)
+                .setXmlLayout(R.layout.left_column_layout)
+                .setHeader("Tie Orientation")
+                .setText("• Place the tie with the seam side down, against your neck\n" +
+                        "• It does not matter which side of your neck the fat side is on")
+                .setVideoResource(R.raw.Orientation2));
+        cardInfos.add(new CardInfo(cardInfos.size(), CardBuilder.Layout.EMBED_INSIDE)
+                .setXmlLayout(R.layout.left_column_layout)
+                .setHeader("Adjust for Length (Basic)")
+                .setText("• Pull the fat end down until the skinny end is about at the top of your ribcage\n" +
+                        "• This is a basic rule of thumb\n" +
+                        "• Practice will allow for better feel for length")
+                .setVideoResource(R.raw.Length3));
+        cardInfos.add(new CardInfo(cardInfos.size(), CardBuilder.Layout.EMBED_INSIDE)
+                .setXmlLayout(R.layout.left_column_layout)
+                .setHeader("The X")
+                .setText("• Take the fat end and cross it over the skinny end\n" +
+                        "• This should form an X\n" +
+                        "• Hold the center of the X with one hand, the Knot Hand\n" +
+                        "• The knot hand will generally not move")
+                .setVideoResource(R.raw.TheX4));
+        cardInfos.add(new CardInfo(cardInfos.size(), CardBuilder.Layout.EMBED_INSIDE)
+                .setXmlLayout(R.layout.left_column_layout)
+                .setHeader("The Knot Hole")
+                .setText("• The area between your neck and the X we’ll call the Knot Hole \n" +
+                        "• The Fat end can make four possible motions\n" +
+                        "• Come out of the Hole\n" +
+                        "• Go into the Hole \n" +
+                        "• Go behind the Hole\n" +
+                        "• Go across the front of the Hole")
+                .setVideoResource(R.raw.KnotHole5));
+        cardInfos.add(new CardInfo(cardInfos.size(), CardBuilder.Layout.EMBED_INSIDE)
+                .setXmlLayout(R.layout.left_column_layout)
+                .setHeader("Tie comes out of the Knot Hole")
+                .setText("• Place hand on front of the tie and push it up through the Knot Hole\n" +
+                        "• Pull the tie down in front of the X\n" +
+                        "• The face side of the tie should be visible after this is done")
+                .setVideoResource(R.raw.OutOfHole6));
+        cardInfos.add(new CardInfo(cardInfos.size(), CardBuilder.Layout.EMBED_INSIDE)
+                .setXmlLayout(R.layout.left_column_layout)
+                .setHeader("Tie goes behind the Hole")
+                .setText("• Take the Tie to the side and go straight across behind the hole\n" +
+                        "• With the tie on your shoulder, the seam side should be visible\n" +
+                        "• This will create the first Triangle\n" +
+                        "• This triangle should remain close to the X")
+                .setVideoResource(R.raw.BehindHole7));
+        cardInfos.add(new CardInfo(cardInfos.size(), CardBuilder.Layout.EMBED_INSIDE)
+                .setXmlLayout(R.layout.left_column_layout)
+                .setHeader("Tie goes into the Hole")
+                .setText("• Take the Tie from your shoulder and go into the hole\n" +
+                        "• Pull the rest of the tie down behind the partial knot\n" +
+                        "• This forms the second triangle\n" +
+                        "• Notice that the seam side is again visible")
+                .setVideoResource(R.raw.IntoTheHole8));
+        cardInfos.add(new CardInfo(cardInfos.size(), CardBuilder.Layout.EMBED_INSIDE)
+                .setXmlLayout(R.layout.left_column_layout)
+                .setHeader("• Tighten Triangles")
+                .setText("• After each triangle is formed you will want to give a slight tug on the Tie\n" +
+                        "• This will help maintain the shape of the final knot\n" +
+                        "• The triangles should be snug but not overly tight")
+                .setVideoResource(R.raw.Triangles9));
+        cardInfos.add(new CardInfo(cardInfos.size(), CardBuilder.Layout.EMBED_INSIDE)
+                .setXmlLayout(R.layout.left_column_layout)
+                .setHeader("Tie goes across the Hole")
+                .setText("• Place your Knot Hand index finder between the triangles\n" +
+                        "• Take the Tie across the front of the hole and over your index finger\n" +
+                        "• Notice the smooth side is the visible side")
+                .setVideoResource(R.raw.AcrossHole10));
+        cardInfos.add(new CardInfo(cardInfos.size(), CardBuilder.Layout.EMBED_INSIDE)
+                .setXmlLayout(R.layout.left_column_layout)
+                .setHeader("Tie goes out of the Hole, again")
+                .setText("• Make the tie go out of the hole\n" +
+                        "• Then push the tie through the opening where your Knot Index finger is\n" +
+                        "• Pull the fat end downward to tighten the knot\n" +
+                        "• Be sure you do not lose the skinny end")
+                .setVideoResource(R.raw.OutOfHoleAgain11));
+        cardInfos.add(new CardInfo(cardInfos.size(), CardBuilder.Layout.EMBED_INSIDE)
+                .setXmlLayout(R.layout.left_column_layout)
+                .setHeader("Tidy the Knot")
+                .setText("• Squeeze the bottom of the knot to help form the proper shape\n" +
+                        "• Pulling the tops apart can also help\n" +
+                        "• Hold the bottom of the knot, and pull on the skinny end to slide the knot up to your neck")
+                .setVideoResource(R.raw.TidyKnot12));
     }
 }
