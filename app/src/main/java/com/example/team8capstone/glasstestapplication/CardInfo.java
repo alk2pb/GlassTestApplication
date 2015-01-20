@@ -69,4 +69,9 @@ public class CardInfo {
         return this;
     }
 
+    public CardInfo setTextSize(int _textSize){
+        textSize = _textSize;
+        return this;
+    }
+
 }

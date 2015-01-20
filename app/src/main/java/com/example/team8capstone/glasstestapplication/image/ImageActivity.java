@@ -42,7 +42,7 @@ public final class ImageActivity extends Activity {
         Bundle extras = getIntent().getExtras();
         if(extras !=null)
         {
-            resource = extras.getInt("resource");
+            resource = extras.getInt("imageResource");
         }
 
         getWindow().requestFeature(WindowUtils.FEATURE_VOICE_COMMANDS);

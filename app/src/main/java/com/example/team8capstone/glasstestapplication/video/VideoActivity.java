@@ -51,7 +51,7 @@ public final class VideoActivity extends Activity implements SurfaceHolder.Callb
         Bundle extras = getIntent().getExtras();
         if(extras !=null)
         {
-            resource = extras.getInt("resource");
+            resource = extras.getInt("videoResource");
         }
 
         getWindow().requestFeature(WindowUtils.FEATURE_VOICE_COMMANDS);

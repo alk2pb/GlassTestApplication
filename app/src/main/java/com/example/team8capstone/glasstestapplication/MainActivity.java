@@ -440,8 +440,8 @@ public class MainActivity extends Activity implements MediaPlayer.OnCompletionLi
     // Set media resources based on slide position
     private void setMediaResources(int position){
         if (cardInfos.get(position).hasImage){
-            image.removeExtra("resource");
-            image.putExtra("resource", cardInfos.get(position).imageResource);
+            image.removeExtra("imageResource");
+            image.putExtra("imageResource", cardInfos.get(position).imageResource);
         }
 
         if (cardInfos.get(position).hasAudio){
@@ -452,8 +452,8 @@ public class MainActivity extends Activity implements MediaPlayer.OnCompletionLi
         }
 
         if (cardInfos.get(position).hasVideo){
-            video.removeExtra("resource");
-            video.putExtra("resource", cardInfos.get(position).videoResource);
+            video.removeExtra("videoResource");
+            video.putExtra("videoResource", cardInfos.get(position).videoResource);
         }
     }
 
@@ -515,26 +515,26 @@ public class MainActivity extends Activity implements MediaPlayer.OnCompletionLi
 
     // Set Card Info
     private void setCardInfo() {
-        cardInfos.add(new CardInfo(cardInfos.size(), CardBuilder.Layout.EMBED_INSIDE)
-                .setXmlLayout(R.layout.left_column_layout)
-                .setImageResource(R.drawable.beach)
-                .setHeader("Test"));
-        cardInfos.add(new CardInfo(cardInfos.size(), CardBuilder.Layout.TEXT)
-                .setVideoResource(R.raw.video_file_1)
-                .setText("Test"));
-        cardInfos.add(new CardInfo(cardInfos.size(), CardBuilder.Layout.TEXT)
-                .setAudioResource(R.raw.sound_file_1)
-                .setText("Test"));
-        cardInfos.add(new CardInfo(cardInfos.size(), CardBuilder.Layout.EMBED_INSIDE)
-                .setXmlLayout(R.layout.left_column_layout)
-                .setImageResource(R.drawable.supplies)
-                .setHeader("Step 1: Gather Supplies")
-                .setText("• Stepstool\n" +
-                        "• Acrylic yarn\n" +
-                        "• Pulling comb\n" +
-                        "• Rug Hook\n" +
-                        "• Small bucket of clean water\n" +
-                        "• Quic Braid (optional)"));
+//        cardInfos.add(new CardInfo(cardInfos.size(), CardBuilder.Layout.EMBED_INSIDE)
+//                .setXmlLayout(R.layout.left_column_layout)
+//                .setImageResource(R.drawable.beach)
+//                .setHeader("Test"));
+//        cardInfos.add(new CardInfo(cardInfos.size(), CardBuilder.Layout.TEXT)
+//                .setVideoResource(R.raw.video_file_1)
+//                .setText("Test"));
+//        cardInfos.add(new CardInfo(cardInfos.size(), CardBuilder.Layout.TEXT)
+//                .setAudioResource(R.raw.sound_file_1)
+//                .setText("Test"));
+//        cardInfos.add(new CardInfo(cardInfos.size(), CardBuilder.Layout.EMBED_INSIDE)
+//                .setXmlLayout(R.layout.left_column_layout)
+//                .setImageResource(R.drawable.supplies)
+//                .setHeader("Step 1: Gather Supplies")
+//                .setText("• Stepstool\n" +
+//                        "• Acrylic yarn\n" +
+//                        "• Pulling comb\n" +
+//                        "• Rug Hook\n" +
+//                        "• Small bucket of clean water\n" +
+//                        "• Quic Braid (optional)"));
         cardInfos.add(new CardInfo(cardInfos.size(), CardBuilder.Layout.EMBED_INSIDE)
                 .setXmlLayout(R.layout.left_column_layout)
                 .setHeader("Getting to know the tie")
@@ -542,20 +542,24 @@ public class MainActivity extends Activity implements MediaPlayer.OnCompletionLi
                         "• Fat End\n" +
                         "• Face End (Smooth)\n" +
                         "• Seam Side")
-                .setVideoResource(R.raw.GetToKnowTie1));
+                .setVideoResource(R.raw.gettoknowtie1)
+                .setImageResource(R.drawable.playbutton));
         cardInfos.add(new CardInfo(cardInfos.size(), CardBuilder.Layout.EMBED_INSIDE)
                 .setXmlLayout(R.layout.left_column_layout)
                 .setHeader("Tie Orientation")
                 .setText("• Place the tie with the seam side down, against your neck\n" +
                         "• It does not matter which side of your neck the fat side is on")
-                .setVideoResource(R.raw.Orientation2));
+                .setVideoResource(R.raw.orientation2)
+                .setImageResource(R.drawable.playbutton));
         cardInfos.add(new CardInfo(cardInfos.size(), CardBuilder.Layout.EMBED_INSIDE)
                 .setXmlLayout(R.layout.left_column_layout)
                 .setHeader("Adjust for Length (Basic)")
                 .setText("• Pull the fat end down until the skinny end is about at the top of your ribcage\n" +
                         "• This is a basic rule of thumb\n" +
                         "• Practice will allow for better feel for length")
-                .setVideoResource(R.raw.Length3));
+                .setVideoResource(R.raw.length3)
+                .setImageResource(R.drawable.playbutton)
+                .setTextSize(13));
         cardInfos.add(new CardInfo(cardInfos.size(), CardBuilder.Layout.EMBED_INSIDE)
                 .setXmlLayout(R.layout.left_column_layout)
                 .setHeader("The X")
@@ -563,7 +567,9 @@ public class MainActivity extends Activity implements MediaPlayer.OnCompletionLi
                         "• This should form an X\n" +
                         "• Hold the center of the X with one hand, the Knot Hand\n" +
                         "• The knot hand will generally not move")
-                .setVideoResource(R.raw.TheX4));
+                .setVideoResource(R.raw.thex4)
+                .setImageResource(R.drawable.playbutton)
+                .setTextSize(13));
         cardInfos.add(new CardInfo(cardInfos.size(), CardBuilder.Layout.EMBED_INSIDE)
                 .setXmlLayout(R.layout.left_column_layout)
                 .setHeader("The Knot Hole")
@@ -573,14 +579,18 @@ public class MainActivity extends Activity implements MediaPlayer.OnCompletionLi
                         "• Go into the Hole \n" +
                         "• Go behind the Hole\n" +
                         "• Go across the front of the Hole")
-                .setVideoResource(R.raw.KnotHole5));
+                .setVideoResource(R.raw.knothole5)
+                .setImageResource(R.drawable.playbutton)
+                .setTextSize(12));
         cardInfos.add(new CardInfo(cardInfos.size(), CardBuilder.Layout.EMBED_INSIDE)
                 .setXmlLayout(R.layout.left_column_layout)
                 .setHeader("Tie comes out of the Knot Hole")
                 .setText("• Place hand on front of the tie and push it up through the Knot Hole\n" +
                         "• Pull the tie down in front of the X\n" +
                         "• The face side of the tie should be visible after this is done")
-                .setVideoResource(R.raw.OutOfHole6));
+                .setVideoResource(R.raw.outofhole6)
+                .setImageResource(R.drawable.playbutton)
+                .setTextSize(12));
         cardInfos.add(new CardInfo(cardInfos.size(), CardBuilder.Layout.EMBED_INSIDE)
                 .setXmlLayout(R.layout.left_column_layout)
                 .setHeader("Tie goes behind the Hole")
@@ -588,7 +598,9 @@ public class MainActivity extends Activity implements MediaPlayer.OnCompletionLi
                         "• With the tie on your shoulder, the seam side should be visible\n" +
                         "• This will create the first Triangle\n" +
                         "• This triangle should remain close to the X")
-                .setVideoResource(R.raw.BehindHole7));
+                .setVideoResource(R.raw.behindhole7)
+                .setImageResource(R.drawable.playbutton)
+                .setTextSize(11));
         cardInfos.add(new CardInfo(cardInfos.size(), CardBuilder.Layout.EMBED_INSIDE)
                 .setXmlLayout(R.layout.left_column_layout)
                 .setHeader("Tie goes into the Hole")
@@ -596,21 +608,27 @@ public class MainActivity extends Activity implements MediaPlayer.OnCompletionLi
                         "• Pull the rest of the tie down behind the partial knot\n" +
                         "• This forms the second triangle\n" +
                         "• Notice that the seam side is again visible")
-                .setVideoResource(R.raw.IntoTheHole8));
+                .setVideoResource(R.raw.intothehole8)
+                .setImageResource(R.drawable.playbutton)
+                .setTextSize(12));
         cardInfos.add(new CardInfo(cardInfos.size(), CardBuilder.Layout.EMBED_INSIDE)
                 .setXmlLayout(R.layout.left_column_layout)
-                .setHeader("• Tighten Triangles")
+                .setHeader("Tighten Triangles")
                 .setText("• After each triangle is formed you will want to give a slight tug on the Tie\n" +
                         "• This will help maintain the shape of the final knot\n" +
                         "• The triangles should be snug but not overly tight")
-                .setVideoResource(R.raw.Triangles9));
+                .setVideoResource(R.raw.triangles9)
+                .setImageResource(R.drawable.playbutton)
+                .setTextSize(13));
         cardInfos.add(new CardInfo(cardInfos.size(), CardBuilder.Layout.EMBED_INSIDE)
                 .setXmlLayout(R.layout.left_column_layout)
                 .setHeader("Tie goes across the Hole")
                 .setText("• Place your Knot Hand index finder between the triangles\n" +
                         "• Take the Tie across the front of the hole and over your index finger\n" +
                         "• Notice the smooth side is the visible side")
-                .setVideoResource(R.raw.AcrossHole10));
+                .setVideoResource(R.raw.acrosshole10)
+                .setImageResource(R.drawable.playbutton)
+                .setTextSize(12));
         cardInfos.add(new CardInfo(cardInfos.size(), CardBuilder.Layout.EMBED_INSIDE)
                 .setXmlLayout(R.layout.left_column_layout)
                 .setHeader("Tie goes out of the Hole, again")
@@ -618,13 +636,17 @@ public class MainActivity extends Activity implements MediaPlayer.OnCompletionLi
                         "• Then push the tie through the opening where your Knot Index finger is\n" +
                         "• Pull the fat end downward to tighten the knot\n" +
                         "• Be sure you do not lose the skinny end")
-                .setVideoResource(R.raw.OutOfHoleAgain11));
+                .setVideoResource(R.raw.outofholeagain11)
+                .setImageResource(R.drawable.playbutton)
+                .setTextSize(11));
         cardInfos.add(new CardInfo(cardInfos.size(), CardBuilder.Layout.EMBED_INSIDE)
                 .setXmlLayout(R.layout.left_column_layout)
                 .setHeader("Tidy the Knot")
                 .setText("• Squeeze the bottom of the knot to help form the proper shape\n" +
                         "• Pulling the tops apart can also help\n" +
                         "• Hold the bottom of the knot, and pull on the skinny end to slide the knot up to your neck")
-                .setVideoResource(R.raw.TidyKnot12));
+                .setVideoResource(R.raw.tidyknot12)
+                .setImageResource(R.drawable.playbutton)
+                .setTextSize(13));
     }
 }
