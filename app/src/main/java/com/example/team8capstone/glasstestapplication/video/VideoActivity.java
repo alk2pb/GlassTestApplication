@@ -44,9 +44,7 @@ public final class VideoActivity extends Activity implements SurfaceHolder.Callb
 
     Time time = new Time();
 
-    private int maxVolume = 10;
-    private int currVolume = 9;
-    private float tempVolume;
+    private AudioManager am;
 
     @Override
     protected void onCreate(Bundle bundle) {
@@ -62,6 +60,7 @@ public final class VideoActivity extends Activity implements SurfaceHolder.Callb
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         mView = buildView();
+
 
         mCardScroller = new CardScrollView(this);
         mCardScroller.setAdapter(new CardScrollAdapter() {
@@ -89,13 +88,17 @@ public final class VideoActivity extends Activity implements SurfaceHolder.Callb
             }
         });
 
+        // Set mediaPlayer volume to max
+        am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+        mediaPlayer.setAudioStreamType(AudioManager.STREAM_SYSTEM);
+        am.setStreamVolume(AudioManager.STREAM_SYSTEM,am.getStreamMaxVolume(AudioManager.STREAM_SYSTEM),0);
+
         // Handle the TAP event.
         mCardScroller.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 // Plays disallowed sound to indicate that TAP actions are not supported.
-                AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
                 am.playSoundEffect(Sounds.TAP);
                 openOptionsMenu();
             }
@@ -106,11 +109,6 @@ public final class VideoActivity extends Activity implements SurfaceHolder.Callb
         surfaceView = (SurfaceView) mView.findViewById(R.id.video);
         surfaceHolder = surfaceView.getHolder();
         surfaceHolder.addCallback(this);
-
-        // Set mediaPlayer volume to max
-        tempVolume=(float)(Math.log(maxVolume-currVolume)/Math.log(maxVolume));
-        mediaPlayer.setVolume(1-tempVolume,1-tempVolume);
-
     }
 
     public void onCompletion(MediaPlayer mediaplayer) {
@@ -171,8 +169,8 @@ public final class VideoActivity extends Activity implements SurfaceHolder.Callb
                 menu.findItem(9).getSubMenu().add(Menu.NONE,7,Menu.NONE,"fast forward");
                 menu.findItem(9).getSubMenu().add(Menu.NONE,8,Menu.NONE,"play from beginning");
                 menu.findItem(9).getSubMenu().add(Menu.NONE,R.id._cancel,Menu.NONE,"cancel");
-                menu.findItem(9).getSubMenu().add(Menu.NONE,15,Menu.NONE,"volume up");
-                menu.findItem(9).getSubMenu().add(Menu.NONE,16,Menu.NONE,"volume down");
+//                menu.findItem(9).getSubMenu().add(Menu.NONE,15,Menu.NONE,"volume up");
+//                menu.findItem(9).getSubMenu().add(Menu.NONE,16,Menu.NONE,"volume down");
             }
             time.setToNow();
             Log.i(TAG,time.toString() + ", " + "Menu populated" + " LogEntryEnd");
@@ -238,24 +236,16 @@ public final class VideoActivity extends Activity implements SurfaceHolder.Callb
                     mediaPlayer.seekTo(0);
                     isPaused = false;
                     break;
-                case 15:
-                    if (currVolume < 9) {
-                        currVolume++;
-                    }
-                    tempVolume=(float)(Math.log(maxVolume-currVolume)/Math.log(maxVolume));
-                    mediaPlayer.setVolume(1-tempVolume,1-tempVolume);
-                    time.setToNow();
-                    Log.i(TAG,time.toString() + ", " + "Volume increased" + " LogEntryEnd");
-                    break;
-                case 16:
-                    if (currVolume > 0) {
-                        currVolume--;
-                    }
-                    tempVolume=(float)(Math.log(maxVolume-currVolume)/Math.log(maxVolume));
-                    mediaPlayer.setVolume(1-tempVolume,1-tempVolume);
-                    time.setToNow();
-                    Log.i(TAG,time.toString() + ", " + "Volume decreased" + " LogEntryEnd");
-                    break;
+//                case 15:
+//                    am.adjustStreamVolume(AudioManager.STREAM_SYSTEM,AudioManager.ADJUST_RAISE,0);
+//                    time.setToNow();
+//                    Log.i(TAG,time.toString() + ", " + "Volume increased" + " LogEntryEnd");
+//                    break;
+//                case 16:
+//                    am.adjustStreamVolume(AudioManager.STREAM_SYSTEM,AudioManager.ADJUST_LOWER,0);
+//                    time.setToNow();
+//                    Log.i(TAG,time.toString() + ", " + "Volume decreased" + " LogEntryEnd");
+//                    break;
                 default:
                     time.setToNow();
                     Log.i(TAG,time.toString() + ", " + "Cancel selected" + " LogEntryEnd");

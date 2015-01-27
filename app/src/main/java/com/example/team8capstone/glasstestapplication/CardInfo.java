@@ -21,7 +21,7 @@ public class CardInfo {
     public boolean hasText = false;
     public String header;
     public int headerTextSize = 16;
-    public int textSize = 14;
+    public int textSize = 12;
     public String text;
     public int offset = 20;
 

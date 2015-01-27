@@ -35,7 +35,6 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 
-// MainActivity creates the main "powerpoint" view and navigation menu
 public class MainActivity extends Activity implements MediaPlayer.OnCompletionListener {
     // Array of Card Infos
     private ArrayList<CardInfo> cardInfos = new ArrayList<CardInfo>();
@@ -56,13 +55,11 @@ public class MainActivity extends Activity implements MediaPlayer.OnCompletionLi
 
     private Time time = new Time();
 
-    private int maxVolume = 10;
-    private int currVolume = 9;
-    private float tempVolume;
-
     private boolean hasPlayed = false;
 
     private int currentSlide = 0;
+
+    private AudioManager am;
 
     @Override
     protected void onCreate(Bundle bundle) {
@@ -107,8 +104,10 @@ public class MainActivity extends Activity implements MediaPlayer.OnCompletionLi
         }
 
         // Set mediaPlayer volume to max
-        tempVolume=(float)(Math.log(maxVolume-currVolume)/Math.log(maxVolume));
-        mediaPlayer.setVolume(1-tempVolume,1-tempVolume);
+        am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+        mediaPlayer.setAudioStreamType(AudioManager.STREAM_SYSTEM);
+        am.setStreamVolume(AudioManager.STREAM_SYSTEM,am.getStreamMaxVolume(AudioManager.STREAM_SYSTEM),0);
+
     }
 
     // When the MediaPlayer finishes, close and refresh the menu
@@ -190,8 +189,8 @@ public class MainActivity extends Activity implements MediaPlayer.OnCompletionLi
             time.setToNow();
             Log.i(TAG,time.toString() + ", " + "Menu populated" + " LogEntryEnd");
 
-          // Dynamically decides between enabling/disabling voice menu.
-          return mVoiceMenuEnabled;
+            // Dynamically decides between enabling/disabling voice menu.
+            return mVoiceMenuEnabled;
         }
 
         // Good practice to pass through, for options menu.
@@ -261,8 +260,8 @@ public class MainActivity extends Activity implements MediaPlayer.OnCompletionLi
         menu.findItem(9).getSubMenu().add(Menu.NONE,6,Menu.NONE,"rewind");
         menu.findItem(9).getSubMenu().add(Menu.NONE,7,Menu.NONE,"fast forward");
         menu.findItem(9).getSubMenu().add(Menu.NONE,8,Menu.NONE,"play from beginning");
-        menu.findItem(9).getSubMenu().add(Menu.NONE,15,Menu.NONE,"volume up");
-        menu.findItem(9).getSubMenu().add(Menu.NONE,16,Menu.NONE,"volume down");
+//        menu.findItem(9).getSubMenu().add(Menu.NONE,15,Menu.NONE,"volume up");
+//        menu.findItem(9).getSubMenu().add(Menu.NONE,16,Menu.NONE,"volume down");
     }
 
     // Collapse a menu to prevent menu options from going off the viewable screen
@@ -418,24 +417,16 @@ public class MainActivity extends Activity implements MediaPlayer.OnCompletionLi
                     Log.i(TAG,time.toString() + ", " + "Exit selected" + " LogEntryEnd");
                     finish();
                     break;
-                case 15:
-                    if (currVolume < 9) {
-                        currVolume++;
-                    }
-                    tempVolume=(float)(Math.log(maxVolume-currVolume)/Math.log(maxVolume));
-                    mediaPlayer.setVolume(1-tempVolume,1-tempVolume);
-                    time.setToNow();
-                    Log.i(TAG,time.toString() + ", " + "Volume increased" + " LogEntryEnd");
-                    break;
-                case 16:
-                    if (currVolume > 0) {
-                        currVolume--;
-                    }
-                    tempVolume=(float)(Math.log(maxVolume-currVolume)/Math.log(maxVolume));
-                    mediaPlayer.setVolume(1-tempVolume,1-tempVolume);
-                    time.setToNow();
-                    Log.i(TAG,time.toString() + ", " + "Volume decreased" + " LogEntryEnd");
-                    break;
+//                case 15:
+//                    am.adjustStreamVolume(AudioManager.STREAM_SYSTEM,AudioManager.ADJUST_RAISE,0);
+//                    time.setToNow();
+//                    Log.i(TAG,time.toString() + ", " + "Volume increased" + " LogEntryEnd");
+//                    break;
+//                case 16:
+//                    am.adjustStreamVolume(AudioManager.STREAM_SYSTEM,AudioManager.ADJUST_LOWER,0);
+//                    time.setToNow();
+//                    Log.i(TAG,time.toString() + ", " + "Volume decreased" + " LogEntryEnd");
+//                    break;
                 default:
                     for (CardInfo cardInfo : cardInfos){
                         if (item.getItemId() == cardInfo.goTo){
@@ -539,7 +530,6 @@ public class MainActivity extends Activity implements MediaPlayer.OnCompletionLi
                 time.setToNow();
                 Log.i(TAG,time.toString() + ", " + "Slide " + mCardScroller.getSelectedItemPosition() + " tapped" + " LogEntryEnd");
                 // Play sound.
-                AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
                 am.playSoundEffect(soundEffect);
                 openOptionsMenu();
             }
@@ -593,8 +583,7 @@ public class MainActivity extends Activity implements MediaPlayer.OnCompletionLi
                         "• This is a basic rule of thumb\n" +
                         "• Practice will allow for better feel for length")
                 .setVideoResource(R.raw.length3)
-                .setImageResource(R.drawable.playbutton)
-                .setTextSize(13));
+                .setImageResource(R.drawable.playbutton));
         cardInfos.add(new CardInfo(cardInfos.size(), CardBuilder.Layout.EMBED_INSIDE)
                 .setXmlLayout(R.layout.left_column_layout)
                 .setHeader("The X")
@@ -603,8 +592,7 @@ public class MainActivity extends Activity implements MediaPlayer.OnCompletionLi
                         "• Hold the center of the X with one hand, the Knot Hand\n" +
                         "• The knot hand will generally not move")
                 .setVideoResource(R.raw.thex4)
-                .setImageResource(R.drawable.playbutton)
-                .setTextSize(13));
+                .setImageResource(R.drawable.playbutton));
         cardInfos.add(new CardInfo(cardInfos.size(), CardBuilder.Layout.EMBED_INSIDE)
                 .setXmlLayout(R.layout.left_column_layout)
                 .setHeader("The Knot Hole")
@@ -615,8 +603,7 @@ public class MainActivity extends Activity implements MediaPlayer.OnCompletionLi
                         "• Go behind the Hole\n" +
                         "• Go across the front of the Hole")
                 .setVideoResource(R.raw.knothole5)
-                .setImageResource(R.drawable.playbutton)
-                .setTextSize(12));
+                .setImageResource(R.drawable.playbutton));
         cardInfos.add(new CardInfo(cardInfos.size(), CardBuilder.Layout.EMBED_INSIDE)
                 .setXmlLayout(R.layout.left_column_layout)
                 .setHeader("Tie comes out of the Knot Hole")
@@ -624,8 +611,7 @@ public class MainActivity extends Activity implements MediaPlayer.OnCompletionLi
                         "• Pull the tie down in front of the X\n" +
                         "• The face side of the tie should be visible after this is done")
                 .setVideoResource(R.raw.outofhole6)
-                .setImageResource(R.drawable.playbutton)
-                .setTextSize(12));
+                .setImageResource(R.drawable.playbutton));
         cardInfos.add(new CardInfo(cardInfos.size(), CardBuilder.Layout.EMBED_INSIDE)
                 .setXmlLayout(R.layout.left_column_layout)
                 .setHeader("Tie goes behind the Hole")
@@ -634,8 +620,7 @@ public class MainActivity extends Activity implements MediaPlayer.OnCompletionLi
                         "• This will create the first Triangle\n" +
                         "• This triangle should remain close to the X")
                 .setVideoResource(R.raw.behindhole7)
-                .setImageResource(R.drawable.playbutton)
-                .setTextSize(11));
+                .setImageResource(R.drawable.playbutton));
         cardInfos.add(new CardInfo(cardInfos.size(), CardBuilder.Layout.EMBED_INSIDE)
                 .setXmlLayout(R.layout.left_column_layout)
                 .setHeader("Tie goes into the Hole")
@@ -644,8 +629,7 @@ public class MainActivity extends Activity implements MediaPlayer.OnCompletionLi
                         "• This forms the second triangle\n" +
                         "• Notice that the seam side is again visible")
                 .setVideoResource(R.raw.intothehole8)
-                .setImageResource(R.drawable.playbutton)
-                .setTextSize(12));
+                .setImageResource(R.drawable.playbutton));
         cardInfos.add(new CardInfo(cardInfos.size(), CardBuilder.Layout.EMBED_INSIDE)
                 .setXmlLayout(R.layout.left_column_layout)
                 .setHeader("Tighten Triangles")
@@ -653,8 +637,7 @@ public class MainActivity extends Activity implements MediaPlayer.OnCompletionLi
                         "• This will help maintain the shape of the final knot\n" +
                         "• The triangles should be snug but not overly tight")
                 .setVideoResource(R.raw.triangles9)
-                .setImageResource(R.drawable.playbutton)
-                .setTextSize(13));
+                .setImageResource(R.drawable.playbutton));
         cardInfos.add(new CardInfo(cardInfos.size(), CardBuilder.Layout.EMBED_INSIDE)
                 .setXmlLayout(R.layout.left_column_layout)
                 .setHeader("Tie goes across the Hole")
@@ -662,8 +645,7 @@ public class MainActivity extends Activity implements MediaPlayer.OnCompletionLi
                         "• Take the Tie across the front of the hole and over your index finger\n" +
                         "• Notice the smooth side is the visible side")
                 .setVideoResource(R.raw.acrosshole10)
-                .setImageResource(R.drawable.playbutton)
-                .setTextSize(12));
+                .setImageResource(R.drawable.playbutton));
         cardInfos.add(new CardInfo(cardInfos.size(), CardBuilder.Layout.EMBED_INSIDE)
                 .setXmlLayout(R.layout.left_column_layout)
                 .setHeader("Tie goes out of the Hole, again")
@@ -672,8 +654,7 @@ public class MainActivity extends Activity implements MediaPlayer.OnCompletionLi
                         "• Pull the fat end downward to tighten the knot\n" +
                         "• Be sure you do not lose the skinny end")
                 .setVideoResource(R.raw.outofholeagain11)
-                .setImageResource(R.drawable.playbutton)
-                .setTextSize(11));
+                .setImageResource(R.drawable.playbutton));
         cardInfos.add(new CardInfo(cardInfos.size(), CardBuilder.Layout.EMBED_INSIDE)
                 .setXmlLayout(R.layout.left_column_layout)
                 .setHeader("Tidy the Knot")
@@ -681,7 +662,6 @@ public class MainActivity extends Activity implements MediaPlayer.OnCompletionLi
                         "• Pulling the tops apart can also help\n" +
                         "• Hold the bottom of the knot, and pull on the skinny end to slide the knot up to your neck")
                 .setVideoResource(R.raw.tidyknot12)
-                .setImageResource(R.drawable.playbutton)
-                .setTextSize(13));
+                .setImageResource(R.drawable.playbutton));
     }
 }
