@@ -56,6 +56,14 @@ public class MainActivity extends Activity implements MediaPlayer.OnCompletionLi
 
     private Time time = new Time();
 
+    private int maxVolume = 10;
+    private int currVolume = 9;
+    private float tempVolume;
+
+    private boolean hasPlayed = false;
+
+    private int currentSlide = 0;
+
     @Override
     protected void onCreate(Bundle bundle) {
         super.onCreate(bundle);
@@ -97,6 +105,10 @@ public class MainActivity extends Activity implements MediaPlayer.OnCompletionLi
 
         } catch (IOException e) {
         }
+
+        // Set mediaPlayer volume to max
+        tempVolume=(float)(Math.log(maxVolume-currVolume)/Math.log(maxVolume));
+        mediaPlayer.setVolume(1-tempVolume,1-tempVolume);
     }
 
     // When the MediaPlayer finishes, close and refresh the menu
@@ -168,13 +180,13 @@ public class MainActivity extends Activity implements MediaPlayer.OnCompletionLi
             addDefaultMenuOptions(menu, position);
             addCustomMenuOptions(menu, position);
 
-            // If the MediaPlayer is playing, add audio options
+            // If the MediaPlayer is playing, add media options
             if (mediaPlayer.isPlaying() || isPaused){
-                addAudioMenuOptions(menu);
+                addMediaMenuOptions(menu);
 
             }
 
-            collapseMenu(menu,1);
+            //collapseMenu(menu,1);
             time.setToNow();
             Log.i(TAG,time.toString() + ", " + "Menu populated" + " LogEntryEnd");
 
@@ -221,11 +233,6 @@ public class MainActivity extends Activity implements MediaPlayer.OnCompletionLi
             menu.removeItem(10);
         }
 
-
-        if (cardInfos.get(position).hasImage){
-            menu.add(Menu.NONE,0,Menu.NONE,"view picture");
-        }
-
         if (cardInfos.get(position).hasAudio){
             if (!mediaPlayer.isPlaying() && !isPaused) {
                 menu.add(Menu.NONE,1,Menu.NONE,"play audio");
@@ -233,14 +240,18 @@ public class MainActivity extends Activity implements MediaPlayer.OnCompletionLi
         }
 
         if (cardInfos.get(position).hasVideo){
-            menu.add(Menu.NONE,2,Menu.NONE,"play video");
+            menu.add(Menu.NONE,0,Menu.NONE,"play video");
+        }
+
+        if (cardInfos.get(position).hasImage){
+            menu.add(Menu.NONE,2,Menu.NONE,"view picture");
         }
 
     }
 
-    private void addAudioMenuOptions(Menu menu){
-        menu.add(Menu.NONE,3,Menu.NONE,"stop audio");
-        menu.addSubMenu(Menu.NONE,9,Menu.NONE,"audio options");
+    private void addMediaMenuOptions(Menu menu){
+        menu.add(Menu.NONE,3,Menu.NONE,"stop media");
+        menu.addSubMenu(Menu.NONE,9,Menu.NONE,"media options");
         if (isPaused){
             menu.findItem(9).getSubMenu().add(Menu.NONE,4,Menu.NONE,"resume");
         }
@@ -250,6 +261,8 @@ public class MainActivity extends Activity implements MediaPlayer.OnCompletionLi
         menu.findItem(9).getSubMenu().add(Menu.NONE,6,Menu.NONE,"rewind");
         menu.findItem(9).getSubMenu().add(Menu.NONE,7,Menu.NONE,"fast forward");
         menu.findItem(9).getSubMenu().add(Menu.NONE,8,Menu.NONE,"play from beginning");
+        menu.findItem(9).getSubMenu().add(Menu.NONE,15,Menu.NONE,"volume up");
+        menu.findItem(9).getSubMenu().add(Menu.NONE,16,Menu.NONE,"volume down");
     }
 
     // Collapse a menu to prevent menu options from going off the viewable screen
@@ -324,7 +337,7 @@ public class MainActivity extends Activity implements MediaPlayer.OnCompletionLi
         if (featureId == WindowUtils.FEATURE_VOICE_COMMANDS ||
                 featureId == Window.FEATURE_OPTIONS_PANEL) {
             switch (item.getItemId()) {
-                case 0:
+                case 2:
                     time.setToNow();
                     Log.i(TAG,time.toString() + ", " + "ImageActivity started" + " LogEntryEnd");
                     startActivity(image);
@@ -334,7 +347,7 @@ public class MainActivity extends Activity implements MediaPlayer.OnCompletionLi
                     Log.i(TAG,time.toString() + ", " + "MediaPlayer started" + " LogEntryEnd");
                     mediaPlayer.start();
                     break;
-                case 2:
+                case 0:
                     time.setToNow();
                     Log.i(TAG,time.toString() + ", " + "VideoActivity started" + " LogEntryEnd");
                     startActivity(video);
@@ -405,6 +418,24 @@ public class MainActivity extends Activity implements MediaPlayer.OnCompletionLi
                     Log.i(TAG,time.toString() + ", " + "Exit selected" + " LogEntryEnd");
                     finish();
                     break;
+                case 15:
+                    if (currVolume < 9) {
+                        currVolume++;
+                    }
+                    tempVolume=(float)(Math.log(maxVolume-currVolume)/Math.log(maxVolume));
+                    mediaPlayer.setVolume(1-tempVolume,1-tempVolume);
+                    time.setToNow();
+                    Log.i(TAG,time.toString() + ", " + "Volume increased" + " LogEntryEnd");
+                    break;
+                case 16:
+                    if (currVolume > 0) {
+                        currVolume--;
+                    }
+                    tempVolume=(float)(Math.log(maxVolume-currVolume)/Math.log(maxVolume));
+                    mediaPlayer.setVolume(1-tempVolume,1-tempVolume);
+                    time.setToNow();
+                    Log.i(TAG,time.toString() + ", " + "Volume decreased" + " LogEntryEnd");
+                    break;
                 default:
                     for (CardInfo cardInfo : cardInfos){
                         if (item.getItemId() == cardInfo.goTo){
@@ -457,6 +488,22 @@ public class MainActivity extends Activity implements MediaPlayer.OnCompletionLi
         }
     }
 
+    // Starts audio and video when card is selected
+    private void startMedia(int position) {
+        if (cardInfos.get(position).hasAudio){
+            time.setToNow();
+            Log.i(TAG,time.toString() + ", " + "MediaPlayer started" + " LogEntryEnd");
+            mediaPlayer.start();
+        }
+
+        if (cardInfos.get(position).hasVideo){
+            time.setToNow();
+            Log.i(TAG,time.toString() + ", " + "VideoActivity started" + " LogEntryEnd");
+            startActivity(video);
+        }
+        hasPlayed = true;
+    }
+
     private void setCardScrollerListener() {
         // When an item is selected, refresh the menu
         mCardScroller.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
@@ -469,6 +516,14 @@ public class MainActivity extends Activity implements MediaPlayer.OnCompletionLi
                 time.setToNow();
                 Log.i(TAG,time.toString() + ", " + "New slide selected" + " LogEntryEnd");
                 Log.i(TAG,time.toString() + ", " + "Current slide: " + mCardScroller.getSelectedItemPosition() + " LogEntryEnd");
+                if (currentSlide != mCardScroller.getSelectedItemPosition()) {
+                    hasPlayed = false;
+                    currentSlide = mCardScroller.getSelectedItemPosition();
+                }
+                if (!hasPlayed) {
+                    startMedia(mCardScroller.getSelectedItemPosition());
+                }
+
             }
 
             @Override
@@ -515,26 +570,6 @@ public class MainActivity extends Activity implements MediaPlayer.OnCompletionLi
 
     // Set Card Info
     private void setCardInfo() {
-//        cardInfos.add(new CardInfo(cardInfos.size(), CardBuilder.Layout.EMBED_INSIDE)
-//                .setXmlLayout(R.layout.left_column_layout)
-//                .setImageResource(R.drawable.beach)
-//                .setHeader("Test"));
-//        cardInfos.add(new CardInfo(cardInfos.size(), CardBuilder.Layout.TEXT)
-//                .setVideoResource(R.raw.video_file_1)
-//                .setText("Test"));
-//        cardInfos.add(new CardInfo(cardInfos.size(), CardBuilder.Layout.TEXT)
-//                .setAudioResource(R.raw.sound_file_1)
-//                .setText("Test"));
-//        cardInfos.add(new CardInfo(cardInfos.size(), CardBuilder.Layout.EMBED_INSIDE)
-//                .setXmlLayout(R.layout.left_column_layout)
-//                .setImageResource(R.drawable.supplies)
-//                .setHeader("Step 1: Gather Supplies")
-//                .setText("• Stepstool\n" +
-//                        "• Acrylic yarn\n" +
-//                        "• Pulling comb\n" +
-//                        "• Rug Hook\n" +
-//                        "• Small bucket of clean water\n" +
-//                        "• Quic Braid (optional)"));
         cardInfos.add(new CardInfo(cardInfos.size(), CardBuilder.Layout.EMBED_INSIDE)
                 .setXmlLayout(R.layout.left_column_layout)
                 .setHeader("Getting to know the tie")
