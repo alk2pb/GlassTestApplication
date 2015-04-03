@@ -19,10 +19,11 @@ public class CardInfo {
     public boolean hasVideo = false;
     public boolean hasHeader = false;
     public boolean hasText = false;
+    public boolean hasBullets = false;
     public String header;
     public int headerTextSize = 16;
     public int textSize = 12;
-    public String text;
+    public String text = "";
     public int offset = 20;
 
 
@@ -33,6 +34,21 @@ public class CardInfo {
         hasXmlLayout = true;
         goTo = _slideNumber + offset;
 
+    }
+
+    public CardInfo addBullet(String _text) {
+        if (!hasBullets) {
+            _text = "• " + _text;
+        }
+        else {
+            _text = "\n• " + _text;
+        }
+
+        text += _text;
+        hasBullets = true;
+        hasText = true;
+
+        return this;
     }
 
     public CardInfo setXmlLayout(int _xmlLayout){
