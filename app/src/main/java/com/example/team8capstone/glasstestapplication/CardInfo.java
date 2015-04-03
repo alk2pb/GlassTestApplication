@@ -26,9 +26,11 @@ public class CardInfo {
     public int offset = 20;
 
 
-    public CardInfo(int _slideNumber, CardBuilder.Layout _layout) {
+    public CardInfo(int _slideNumber, int _xmlLayout) {
         slideNumber = _slideNumber;
-        layout = _layout;
+        layout = CardBuilder.Layout.EMBED_INSIDE;
+        xmlLayout = _xmlLayout;
+        hasXmlLayout = true;
         goTo = _slideNumber + offset;
 
     }

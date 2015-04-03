@@ -55,7 +55,7 @@ public class MainActivity extends Activity implements MediaPlayer.OnCompletionLi
 
     private Time time = new Time();
 
-    private boolean hasPlayed = false;
+//    private boolean hasPlayed = false;
 
     private int currentSlide = 0;
 
@@ -185,7 +185,7 @@ public class MainActivity extends Activity implements MediaPlayer.OnCompletionLi
 
             }
 
-            //collapseMenu(menu,1);
+            collapseMenu(menu,1);
             time.setToNow();
             Log.i(TAG,time.toString() + ", " + "Menu populated" + " LogEntryEnd");
 
@@ -228,7 +228,7 @@ public class MainActivity extends Activity implements MediaPlayer.OnCompletionLi
             menu.removeItem(11);
         }
 
-        if (position == mCardScroller.getChildCount()){
+        if (position == cardInfos.size() - 1){
             menu.removeItem(10);
         }
 
@@ -266,47 +266,47 @@ public class MainActivity extends Activity implements MediaPlayer.OnCompletionLi
 
     // Collapse a menu to prevent menu options from going off the viewable screen
     private void collapseMenu(Menu menu, int level){
-        if (level == 1){
-            if (menu.size() > 4){
-                menu.addSubMenu(Menu.NONE,level*100,Menu.NONE,"more options");
-            }
-        }
-        else {
-            if (menu.size() > 3){
-                menu.addSubMenu(Menu.NONE,level*100,Menu.NONE,"more options");
-            }
-        }
-
-        if (level == 1){
-            if (menu.size() > 4){
-                for (int i = 3; i < menu.size(); i++){
-                    if (!(menu.getItem(i).getItemId()/100 >= 1)){
-                        if(menu.getItem(i).hasSubMenu()){
-                            reMenu(menu.findItem(level*100).getSubMenu(), menu.getItem(i));
-                        }
-                        else {
-                            menu.findItem(level*100).getSubMenu().add(Menu.NONE,menu.getItem(i).getItemId(),Menu.NONE,menu.getItem(i).getTitle());
-                        }
-                        menu.removeItem(menu.getItem(i).getItemId());
-                    }
-                }
-            }
-        }
-        else {
-            if (menu.size() > 3){
-                for (int i = 2; i < menu.size(); i++){
-                    if (!(menu.getItem(i).getItemId()/100 >= 1)){
-                        if(menu.getItem(i).hasSubMenu()){
-                            reMenu(menu.findItem(level*100).getSubMenu(), menu.getItem(i));
-                        }
-                        else {
-                            menu.findItem(level*100).getSubMenu().add(Menu.NONE,menu.getItem(i).getItemId(),Menu.NONE,menu.getItem(i).getTitle());
-                        }
-                        menu.removeItem(menu.getItem(i).getItemId());
-                    }
-                }
-            }
-        }
+//        if (level == 1){
+//            if (menu.size() > 4){
+//                menu.addSubMenu(Menu.NONE,level*100,Menu.NONE,"more options");
+//            }
+//        }
+//        else {
+//            if (menu.size() > 3){
+//                menu.addSubMenu(Menu.NONE,level*100,Menu.NONE,"more options");
+//            }
+//        }
+//
+//        if (level == 1){
+//            if (menu.size() > 4){
+//                for (int i = 3; i < menu.size(); i++){
+//                    if (!(menu.getItem(i).getItemId()/100 >= 1)){
+//                        if(menu.getItem(i).hasSubMenu()){
+//                            reMenu(menu.findItem(level*100).getSubMenu(), menu.getItem(i));
+//                        }
+//                        else {
+//                            menu.findItem(level*100).getSubMenu().add(Menu.NONE,menu.getItem(i).getItemId(),Menu.NONE,menu.getItem(i).getTitle());
+//                        }
+//                        menu.removeItem(menu.getItem(i).getItemId());
+//                    }
+//                }
+//            }
+//        }
+//        else {
+//            if (menu.size() > 3){
+//                for (int i = 2; i < menu.size(); i++){
+//                    if (!(menu.getItem(i).getItemId()/100 >= 1)){
+//                        if(menu.getItem(i).hasSubMenu()){
+//                            reMenu(menu.findItem(level*100).getSubMenu(), menu.getItem(i));
+//                        }
+//                        else {
+//                            menu.findItem(level*100).getSubMenu().add(Menu.NONE,menu.getItem(i).getItemId(),Menu.NONE,menu.getItem(i).getTitle());
+//                        }
+//                        menu.removeItem(menu.getItem(i).getItemId());
+//                    }
+//                }
+//            }
+//        }
 
         for (int i = 0; i < menu.size(); i++){
             if (menu.getItem(i).hasSubMenu()){
@@ -397,7 +397,7 @@ public class MainActivity extends Activity implements MediaPlayer.OnCompletionLi
                     isPaused = false;
                     break;
                 case 10:
-                    if (mCardScroller.getSelectedItemPosition() < mCardScroller.getChildCount())
+                    if (mCardScroller.getSelectedItemPosition() < cardInfos.size())
                     {
                         mCardScroller.setSelection(mCardScroller.getSelectedItemPosition() + 1);
                     }
@@ -492,7 +492,7 @@ public class MainActivity extends Activity implements MediaPlayer.OnCompletionLi
             Log.i(TAG,time.toString() + ", " + "VideoActivity started" + " LogEntryEnd");
             startActivity(video);
         }
-        hasPlayed = true;
+//        hasPlayed = true;
     }
 
     private void setCardScrollerListener() {
@@ -507,13 +507,13 @@ public class MainActivity extends Activity implements MediaPlayer.OnCompletionLi
                 time.setToNow();
                 Log.i(TAG,time.toString() + ", " + "New slide selected" + " LogEntryEnd");
                 Log.i(TAG,time.toString() + ", " + "Current slide: " + mCardScroller.getSelectedItemPosition() + " LogEntryEnd");
-                if (currentSlide != mCardScroller.getSelectedItemPosition()) {
-                    hasPlayed = false;
-                    currentSlide = mCardScroller.getSelectedItemPosition();
-                }
-                if (!hasPlayed) {
-                    startMedia(mCardScroller.getSelectedItemPosition());
-                }
+//                if (currentSlide != mCardScroller.getSelectedItemPosition()) {
+//                    hasPlayed = false;
+//                    currentSlide = mCardScroller.getSelectedItemPosition();
+//                }
+//                if (!hasPlayed) {
+//                    startMedia(mCardScroller.getSelectedItemPosition());
+//                }
 
             }
 
@@ -560,41 +560,36 @@ public class MainActivity extends Activity implements MediaPlayer.OnCompletionLi
 
     // Set Card Info
     private void setCardInfo() {
-        cardInfos.add(new CardInfo(cardInfos.size(), CardBuilder.Layout.EMBED_INSIDE)
-                .setXmlLayout(R.layout.left_column_layout)
+        cardInfos.add(new CardInfo(cardInfos.size(), R.layout.left_column_layout)
                 .setHeader("Getting to know the tie")
                 .setText("• Skinny End\n" +
                         "• Fat End\n" +
                         "• Face End (Smooth)\n" +
                         "• Seam Side")
                 .setVideoResource(R.raw.gettoknowtie1)
-                .setImageResource(R.drawable.playbutton));
-        cardInfos.add(new CardInfo(cardInfos.size(), CardBuilder.Layout.EMBED_INSIDE)
-                .setXmlLayout(R.layout.left_column_layout)
+                .setImageResource(R.drawable.tpic1));
+        cardInfos.add(new CardInfo(cardInfos.size(), R.layout.left_column_layout)
                 .setHeader("Tie Orientation")
                 .setText("• Place the tie with the seam side down, against your neck\n" +
                         "• It does not matter which side of your neck the fat side is on")
                 .setVideoResource(R.raw.orientation2)
-                .setImageResource(R.drawable.playbutton));
-        cardInfos.add(new CardInfo(cardInfos.size(), CardBuilder.Layout.EMBED_INSIDE)
-                .setXmlLayout(R.layout.left_column_layout)
+                .setImageResource(R.drawable.tpic2));
+        cardInfos.add(new CardInfo(cardInfos.size(), R.layout.left_column_layout)
                 .setHeader("Adjust for Length (Basic)")
                 .setText("• Pull the fat end down until the skinny end is about at the top of your ribcage\n" +
                         "• This is a basic rule of thumb\n" +
                         "• Practice will allow for better feel for length")
                 .setVideoResource(R.raw.length3)
-                .setImageResource(R.drawable.playbutton));
-        cardInfos.add(new CardInfo(cardInfos.size(), CardBuilder.Layout.EMBED_INSIDE)
-                .setXmlLayout(R.layout.left_column_layout)
+                .setImageResource(R.drawable.tpic3));
+        cardInfos.add(new CardInfo(cardInfos.size(), R.layout.left_column_layout)
                 .setHeader("The X")
                 .setText("• Take the fat end and cross it over the skinny end\n" +
                         "• This should form an X\n" +
                         "• Hold the center of the X with one hand, the Knot Hand\n" +
                         "• The knot hand will generally not move")
                 .setVideoResource(R.raw.thex4)
-                .setImageResource(R.drawable.playbutton));
-        cardInfos.add(new CardInfo(cardInfos.size(), CardBuilder.Layout.EMBED_INSIDE)
-                .setXmlLayout(R.layout.left_column_layout)
+                .setImageResource(R.drawable.tpic4));
+        cardInfos.add(new CardInfo(cardInfos.size(), R.layout.left_column_layout)
                 .setHeader("The Knot Hole")
                 .setText("• The area between your neck and the X we’ll call the Knot Hole \n" +
                         "• The Fat end can make four possible motions\n" +
@@ -603,65 +598,58 @@ public class MainActivity extends Activity implements MediaPlayer.OnCompletionLi
                         "• Go behind the Hole\n" +
                         "• Go across the front of the Hole")
                 .setVideoResource(R.raw.knothole5)
-                .setImageResource(R.drawable.playbutton));
-        cardInfos.add(new CardInfo(cardInfos.size(), CardBuilder.Layout.EMBED_INSIDE)
-                .setXmlLayout(R.layout.left_column_layout)
+                .setImageResource(R.drawable.tpic5));
+        cardInfos.add(new CardInfo(cardInfos.size(), R.layout.left_column_layout)
                 .setHeader("Tie comes out of the Knot Hole")
                 .setText("• Place hand on front of the tie and push it up through the Knot Hole\n" +
                         "• Pull the tie down in front of the X\n" +
                         "• The face side of the tie should be visible after this is done")
                 .setVideoResource(R.raw.outofhole6)
-                .setImageResource(R.drawable.playbutton));
-        cardInfos.add(new CardInfo(cardInfos.size(), CardBuilder.Layout.EMBED_INSIDE)
-                .setXmlLayout(R.layout.left_column_layout)
+                .setImageResource(R.drawable.tpic6));
+        cardInfos.add(new CardInfo(cardInfos.size(), R.layout.left_column_layout)
                 .setHeader("Tie goes behind the Hole")
                 .setText("• Take the Tie to the side and go straight across behind the hole\n" +
                         "• With the tie on your shoulder, the seam side should be visible\n" +
                         "• This will create the first Triangle\n" +
                         "• This triangle should remain close to the X")
                 .setVideoResource(R.raw.behindhole7)
-                .setImageResource(R.drawable.playbutton));
-        cardInfos.add(new CardInfo(cardInfos.size(), CardBuilder.Layout.EMBED_INSIDE)
-                .setXmlLayout(R.layout.left_column_layout)
+                .setImageResource(R.drawable.tpic7));
+        cardInfos.add(new CardInfo(cardInfos.size(), R.layout.left_column_layout)
                 .setHeader("Tie goes into the Hole")
                 .setText("• Take the Tie from your shoulder and go into the hole\n" +
                         "• Pull the rest of the tie down behind the partial knot\n" +
                         "• This forms the second triangle\n" +
                         "• Notice that the seam side is again visible")
                 .setVideoResource(R.raw.intothehole8)
-                .setImageResource(R.drawable.playbutton));
-        cardInfos.add(new CardInfo(cardInfos.size(), CardBuilder.Layout.EMBED_INSIDE)
-                .setXmlLayout(R.layout.left_column_layout)
+                .setImageResource(R.drawable.tpic8));
+        cardInfos.add(new CardInfo(cardInfos.size(), R.layout.left_column_layout)
                 .setHeader("Tighten Triangles")
                 .setText("• After each triangle is formed you will want to give a slight tug on the Tie\n" +
                         "• This will help maintain the shape of the final knot\n" +
                         "• The triangles should be snug but not overly tight")
                 .setVideoResource(R.raw.triangles9)
-                .setImageResource(R.drawable.playbutton));
-        cardInfos.add(new CardInfo(cardInfos.size(), CardBuilder.Layout.EMBED_INSIDE)
-                .setXmlLayout(R.layout.left_column_layout)
+                .setImageResource(R.drawable.tpic9));
+        cardInfos.add(new CardInfo(cardInfos.size(), R.layout.left_column_layout)
                 .setHeader("Tie goes across the Hole")
                 .setText("• Place your Knot Hand index finder between the triangles\n" +
                         "• Take the Tie across the front of the hole and over your index finger\n" +
                         "• Notice the smooth side is the visible side")
                 .setVideoResource(R.raw.acrosshole10)
-                .setImageResource(R.drawable.playbutton));
-        cardInfos.add(new CardInfo(cardInfos.size(), CardBuilder.Layout.EMBED_INSIDE)
-                .setXmlLayout(R.layout.left_column_layout)
+                .setImageResource(R.drawable.tpic10));
+        cardInfos.add(new CardInfo(cardInfos.size(), R.layout.left_column_layout)
                 .setHeader("Tie goes out of the Hole, again")
                 .setText("• Make the tie go out of the hole\n" +
                         "• Then push the tie through the opening where your Knot Index finger is\n" +
                         "• Pull the fat end downward to tighten the knot\n" +
                         "• Be sure you do not lose the skinny end")
                 .setVideoResource(R.raw.outofholeagain11)
-                .setImageResource(R.drawable.playbutton));
-        cardInfos.add(new CardInfo(cardInfos.size(), CardBuilder.Layout.EMBED_INSIDE)
-                .setXmlLayout(R.layout.left_column_layout)
+                .setImageResource(R.drawable.tpic11));
+        cardInfos.add(new CardInfo(cardInfos.size(), R.layout.left_column_layout)
                 .setHeader("Tidy the Knot")
                 .setText("• Squeeze the bottom of the knot to help form the proper shape\n" +
                         "• Pulling the tops apart can also help\n" +
                         "• Hold the bottom of the knot, and pull on the skinny end to slide the knot up to your neck")
                 .setVideoResource(R.raw.tidyknot12)
-                .setImageResource(R.drawable.playbutton));
+                .setImageResource(R.drawable.tpic12));
     }
 }

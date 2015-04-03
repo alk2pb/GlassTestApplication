@@ -89,9 +89,9 @@ public final class VideoActivity extends Activity implements SurfaceHolder.Callb
         });
 
         // Set mediaPlayer volume to max
-        am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-        mediaPlayer.setAudioStreamType(AudioManager.STREAM_SYSTEM);
-        am.setStreamVolume(AudioManager.STREAM_SYSTEM,am.getStreamMaxVolume(AudioManager.STREAM_SYSTEM),0);
+//        am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+//        mediaPlayer.setAudioStreamType(AudioManager.STREAM_SYSTEM);
+//        am.setStreamVolume(AudioManager.STREAM_SYSTEM,am.getStreamMaxVolume(AudioManager.STREAM_SYSTEM),0);
 
         // Handle the TAP event.
         mCardScroller.setOnItemClickListener(new AdapterView.OnItemClickListener() {
