@@ -613,7 +613,8 @@ public class MainActivity extends Activity implements MediaPlayer.OnCompletionLi
                         "• This will create the first Triangle\n" +
                         "• This triangle should remain close to the X")
                 .setVideoResource(R.raw.behindhole7)
-                .setImageResource(R.drawable.tpic7));
+                .setImageResource(R.drawable.tpic7)
+                .setTextSize(10));
         cardInfos.add(new CardInfo(cardInfos.size(), R.layout.left_column_layout)
                 .setHeader("Tie goes into the Hole")
                 .setText("• Take the Tie from your shoulder and go into the hole\n" +
