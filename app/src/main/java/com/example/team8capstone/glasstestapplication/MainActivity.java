@@ -59,7 +59,7 @@ public class MainActivity extends Activity implements MediaPlayer.OnCompletionLi
 
 //    private int currentSlide = 0;
 
-    private AudioManager am;
+    private AudioManager am;how to make a license file
 
     @Override
     protected void onCreate(Bundle bundle) {
